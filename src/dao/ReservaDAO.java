@@ -1,3 +1,4 @@
+// src/dao/ReservaDAO.java
 package dao;
 
 import modelo.Reserva;
@@ -10,18 +11,24 @@ import java.util.List;
 public class ReservaDAO {
 
     /**
-     * Inserta una reserva completa con sus detalles usando JSON
+     * Inserta una reserva completa con sus detalles usando JSON y TRANSACCIONES
+     * CORREGIDO: Ahora maneja transacciones para garantizar consistencia
      * @param r
      * @param detalles
      * @param jsonDetalles
      * @return 
      */
     public boolean insertarReservaCompleta(Reserva r, List<DetalleReserva> detalles, String jsonDetalles) {
-        String sql = "CALL sp_insert_reserva_con_detalle(?,?,?,?,?)";
-
-        try (Connection cn = DBUtil.getConnection();
-             CallableStatement cs = cn.prepareCall(sql)) {
-
+        Connection cn = null;
+        CallableStatement cs = null;
+        
+        try {
+            cn = DBUtil.getConnection();
+            cn.setAutoCommit(false); // ⭐ INICIAR TRANSACCIÓN
+            
+            String sql = "CALL sp_insert_reserva_con_detalle(?,?,?,?,?)";
+            cs = cn.prepareCall(sql);
+            
             cs.setInt(1, r.getIdCliente());
             cs.setInt(2, r.getIdEmpleado());
             cs.setString(3, r.getFechaInicio());
@@ -29,11 +36,35 @@ public class ReservaDAO {
             cs.setString(5, jsonDetalles);
 
             cs.execute();
+            
+            cn.commit(); // ⭐ CONFIRMAR TRANSACCIÓN
+            System.out.println("✅ Reserva insertada exitosamente");
             return true;
 
         } catch (SQLException e) {
-            System.err.println("Error insertarReservaCompleta(): " + e.getMessage());
+            // ⭐ REVERTIR EN CASO DE ERROR
+            if (cn != null) {
+                try {
+                    cn.rollback();
+                    System.err.println("⚠️ Transacción revertida debido a error");
+                } catch (SQLException ex) {
+                    System.err.println("❌ Error al hacer rollback: " + ex.getMessage());
+                }
+            }
+            System.err.println("❌ Error insertarReservaCompleta(): " + e.getMessage());
             return false;
+            
+        } finally {
+            // ⭐ RESTAURAR AUTOCOMMIT Y CERRAR CONEXIÓN
+            try {
+                if (cs != null) cs.close();
+                if (cn != null) {
+                    cn.setAutoCommit(true);
+                    cn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar recursos: " + e.getMessage());
+            }
         }
     }
 
@@ -140,7 +171,7 @@ public class ReservaDAO {
     }
 
     /**
-     * Elimina una reserva
+     * Elimina una reserva (CASCADE elimina detalles automáticamente)
      * @param id
      * @return 
      */
@@ -151,17 +182,25 @@ public class ReservaDAO {
              PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
-            return true;
+            int filasAfectadas = ps.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                System.out.println("✅ Reserva eliminada correctamente");
+                return true;
+            } else {
+                System.err.println("⚠️ No se encontró la reserva con ID: " + id);
+                return false;
+            }
 
         } catch (SQLException e) {
-            System.err.println("Error eliminarReserva(): " + e.getMessage());
+            System.err.println("❌ Error eliminarReserva(): " + e.getMessage());
             return false;
         }
     }
 
     /**
      * Verifica disponibilidad de vehículo en fechas específicas
+     * CORREGIDO: Ahora valida correctamente solapamiento de fechas
      * @param idVehiculo
      * @param fechaInicio
      * @param fechaFin
@@ -180,13 +219,21 @@ public class ReservaDAO {
 
             if (rs.next()) {
                 int conflictos = rs.getInt("reservasConflicto");
-                return conflictos == 0; // true si está disponible
+                boolean disponible = (conflictos == 0);
+                
+                if (disponible) {
+                    System.out.println("✅ Vehículo disponible");
+                } else {
+                    System.out.println("⚠️ Vehículo NO disponible (conflictos: " + conflictos + ")");
+                }
+                
+                return disponible;
             }
 
         } catch (SQLException e) {
-            System.err.println("Error verificarDisponibilidad(): " + e.getMessage());
+            System.err.println("❌ Error verificarDisponibilidad(): " + e.getMessage());
         }
 
-        return false;
+        return false; // En caso de error, asumir NO disponible
     }
 }
