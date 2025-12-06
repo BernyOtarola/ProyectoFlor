@@ -3,6 +3,7 @@ package vista.empleado;
 import javax.swing.JOptionPane;
 import modelo.Empleado;
 
+
 public class EmpleadoDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EmpleadoDialog.class.getName());
@@ -31,29 +32,41 @@ public class EmpleadoDialog extends javax.swing.JDialog {
         txtClave.setText(e.getClave());
     }
 
-    public Empleado obtenerEmpleado() {
-        if (txtNombre.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre es obligatorio");
-            return null;
-        }
+public Empleado obtenerEmpleado() {
 
-        if (txtUsuario.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El usuario es obligatorio");
-            return null;
-        }
-        e new Empleado();
-
-        if (!txtId.getText().trim().isEmpty()) {
-            e.setIdEmpleado(Integer.parseInt(txtId.getText()));
-        }
-
-        e.setNombre(txtNombre.getText().trim());
-        e.setCargo(txtCargo.getText().trim());
-        e.setUsuario(txtUsuario.getText().trim());
-        e.setClave(txtClave.getText().trim());
-
-        return e;
+    // Validaciones básicas
+    if (txtNombre.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El nombre es obligatorio");
+        return null;
     }
+
+    if (txtUsuario.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El usuario es obligatorio");
+        return null;
+    }
+
+    if (txtClave.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "La clave es obligatoria");
+        return null;
+    }
+
+    // Crear objeto empleado
+    Empleado e = new Empleado();
+
+    // Si viene un ID, se asigna (modo edición)
+    if (!txtId.getText().trim().isEmpty()) {
+        e.setIdEmpleado(Integer.parseInt(txtId.getText()));
+    }
+
+    // Asignar propiedades
+    e.setNombre(txtNombre.getText().trim());
+    e.setCargo(txtCargo.getText().trim());
+    e.setUsuario(txtUsuario.getText().trim());
+    e.setClave(txtClave.getText().trim());
+
+    return e;
+}
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
