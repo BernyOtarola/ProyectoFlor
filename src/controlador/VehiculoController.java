@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 /**
  * Controlador para el módulo de Vehículos
  * Implementa CRUD completo con validaciones
+ * 
+ * ⭐ VERSIÓN CORREGIDA - Búsqueda funcionando
  */
 public class VehiculoController implements ActionListener {
 
@@ -33,6 +35,7 @@ public class VehiculoController implements ActionListener {
         vista.btnNuevo.addActionListener(this);
         vista.btnEditar.addActionListener(this);
         vista.btnEliminar.addActionListener(this);
+        vista.btnBuscar.addActionListener(this); // ⭐ CORREGIDO: Listener agregado
 
         // Cargar datos iniciales
         cargarTabla();
@@ -202,15 +205,17 @@ public class VehiculoController implements ActionListener {
     }
 
     /**
-     * Realiza búsqueda/filtrado en la tabla
+     * ⭐ CORREGIDO: Realiza búsqueda/filtrado en la tabla
      * @param filtro Texto a buscar
      */
     private void buscar(String filtro) {
         if (ValidacionUtil.esVacio(filtro)) {
+            // Si está vacío, mostrar todos
             cargarTabla();
             return;
         }
 
+        // Filtrar vehículos
         List<Vehiculo> lista = dao.listarVehiculos();
         String filtroLower = filtro.toLowerCase();
 
@@ -219,12 +224,14 @@ public class VehiculoController implements ActionListener {
                 veh.getPlaca().toLowerCase().contains(filtroLower) ||
                 veh.getMarca().toLowerCase().contains(filtroLower) ||
                 veh.getModelo().toLowerCase().contains(filtroLower) ||
-                veh.getEstado().toLowerCase().contains(filtroLower)
+                veh.getEstado().toLowerCase().contains(filtroLower) ||
+                String.valueOf(veh.getAnio()).contains(filtro)
             )
             .collect(Collectors.toList());
 
         vista.cargarTabla(filtrados);
 
+        // Mensaje si no hay resultados
         if (filtrados.isEmpty()) {
             MensajeUtil.info(vista, "No se encontraron vehículos con el criterio: " + filtro);
         }
@@ -281,6 +288,12 @@ public class VehiculoController implements ActionListener {
                         "Puede tener reservas asociadas.");
                 }
             }
+        }
+
+        // ===== BOTÓN BUSCAR ===== ⭐ CORREGIDO: Funcionalidad agregada
+        if (e.getSource() == vista.btnBuscar) {
+            String filtro = vista.txtBuscar.getText().trim();
+            buscar(filtro);
         }
     }
 }

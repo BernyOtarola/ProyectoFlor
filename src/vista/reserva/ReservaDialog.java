@@ -11,16 +11,17 @@ import javax.swing.table.DefaultTableModel;
 import modelo.DetalleReserva;
 
 /**
- * Diálogo para crear una nueva reserva
- * Permite seleccionar cliente, empleado, fechas y múltiples vehículos
+ * Diálogo para crear una nueva reserva Permite seleccionar cliente, empleado,
+ * fechas y múltiples vehículos
  */
 public class ReservaDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
+    private static final java.util.logging.Logger logger
+            = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
 
     /**
      * Constructor del diálogo
+     *
      * @param parent Frame padre
      * @param modal true para modal, false para no modal
      */
@@ -30,11 +31,15 @@ public class ReservaDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         setTitle("Nueva Reserva de Vehículos");
         configurarTablaDetalle();
-        
+
+        // ⭐ AGREGAR ESTO: Limpiar filas vacías de la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
+        modelo.setRowCount(0);
+
         // Campo total no editable
         txtTotal.setEditable(false);
         txtTotal.setText("₡0.00");
-        
+
         // Configurar fechas por defecto
         LocalDate hoy = LocalDate.now();
         txtFechaInicio.setText(hoy.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
@@ -59,18 +64,19 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Carga clientes en el combo
+     *
      * @param clientes Lista de clientes disponibles
      */
     public void cargarClientes(List<modelo.Cliente> clientes) {
         cboCliente.removeAllItems();
-        
+
         if (clientes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "No hay clientes registrados.\nDebe crear al menos un cliente primero.",
-                "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "No hay clientes registrados.\nDebe crear al menos un cliente primero.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         for (modelo.Cliente c : clientes) {
             cboCliente.addItem(c.getIdCliente() + " - " + c.getNombre());
         }
@@ -78,18 +84,19 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Carga empleados en el combo
+     *
      * @param empleados Lista de empleados disponibles
      */
     public void cargarEmpleados(List<modelo.Empleado> empleados) {
         cboEmpleado.removeAllItems();
-        
+
         if (empleados.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "No hay empleados registrados.\nDebe crear al menos un empleado primero.",
-                "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "No hay empleados registrados.\nDebe crear al menos un empleado primero.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         for (modelo.Empleado e : empleados) {
             cboEmpleado.addItem(e.getIdEmpleado() + " - " + e.getNombre());
         }
@@ -97,6 +104,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Valida que las fechas sean correctas
+     *
      * @return true si las fechas son válidas
      */
     public boolean validarFechas() {
@@ -105,12 +113,12 @@ public class ReservaDialog extends javax.swing.JDialog {
 
         if (!util.ValidacionUtil.rangoFechasValido(inicio, fin)) {
             JOptionPane.showMessageDialog(this,
-                "Las fechas son inválidas.\n" +
-                "Verifique que:\n" +
-                "- El formato sea yyyy-MM-dd\n" +
-                "- La fecha fin sea posterior a la fecha inicio\n" +
-                "- Las fechas no sean pasadas",
-                "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                    "Las fechas son inválidas.\n"
+                    + "Verifique que:\n"
+                    + "- El formato sea yyyy-MM-dd\n"
+                    + "- La fecha fin sea posterior a la fecha inicio\n"
+                    + "- Las fechas no sean pasadas",
+                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -122,22 +130,22 @@ public class ReservaDialog extends javax.swing.JDialog {
 
             if (dias > 365) {
                 JOptionPane.showMessageDialog(this,
-                    "La reserva no puede exceder 365 días.",
-                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                        "La reserva no puede exceder 365 días.",
+                        "Error de Validación", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-            
+
             if (dias < 1) {
                 JOptionPane.showMessageDialog(this,
-                    "La reserva debe ser de al menos 1 día.",
-                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                        "La reserva debe ser de al menos 1 día.",
+                        "Error de Validación", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Formato de fecha inválido. Use: yyyy-MM-dd\n" +
-                "Ejemplo: 2024-12-25",
-                "Error de Formato", JOptionPane.ERROR_MESSAGE);
+                    "Formato de fecha inválido. Use: yyyy-MM-dd\n"
+                    + "Ejemplo: 2024-12-25",
+                    "Error de Formato", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -146,6 +154,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Calcula los días entre las dos fechas
+     *
      * @return Número de días
      */
     public int calcularDias() {
@@ -161,19 +170,25 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Agrega un detalle (vehículo) a la tabla
+     *
      * @param d Detalle de reserva a agregar
      */
     public void agregarDetalle(DetalleReserva d) {
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
 
-        // Verificar si el vehículo ya fue agregado
+        // ⭐ CORREGIDO: Verificar si el vehículo ya fue agregado
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            int idExistente = (int) modelo.getValueAt(i, 0);
-            if (idExistente == d.getIdVehiculo()) {
-                JOptionPane.showMessageDialog(this,
-                    "Este vehículo ya fue agregado a la reserva.",
-                    "Vehículo Duplicado", JOptionPane.WARNING_MESSAGE);
-                return;
+            // ⭐ VALIDAR QUE LA CELDA NO SEA NULL ANTES DE COMPARAR
+            Object valorCelda = modelo.getValueAt(i, 0);
+
+            if (valorCelda != null) {
+                int idExistente = (int) valorCelda;
+                if (idExistente == d.getIdVehiculo()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Este vehículo ya fue agregado a la reserva.",
+                            "Vehículo Duplicado", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
             }
         }
 
@@ -196,15 +211,15 @@ public class ReservaDialog extends javax.swing.JDialog {
         int fila = tblDetalle.getSelectedRow();
         if (fila == -1) {
             JOptionPane.showMessageDialog(this,
-                "Seleccione un vehículo de la tabla para quitar.",
-                "Sin Selección", JOptionPane.INFORMATION_MESSAGE);
+                    "Seleccione un vehículo de la tabla para quitar.",
+                    "Sin Selección", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         int confirmacion = JOptionPane.showConfirmDialog(this,
-            "¿Desea quitar este vehículo de la reserva?",
-            "Confirmar", JOptionPane.YES_NO_OPTION);
-        
+                "¿Desea quitar este vehículo de la reserva?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+
         if (confirmacion == JOptionPane.YES_OPTION) {
             DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
             modelo.removeRow(fila);
@@ -231,6 +246,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene el ID del cliente seleccionado
+     *
      * @return ID del cliente o -1 si no hay selección
      */
     public int getClienteSeleccionado() {
@@ -245,6 +261,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene el ID del empleado seleccionado
+     *
      * @return ID del empleado o -1 si no hay selección
      */
     public int getEmpleadoSeleccionado() {
@@ -259,6 +276,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene la lista de detalles (vehículos) de la tabla
+     *
      * @return Lista de detalles de la reserva
      */
     public List<DetalleReserva> getDetalles() {
@@ -273,14 +291,14 @@ public class ReservaDialog extends javax.swing.JDialog {
 
             // Limpiar formato de precio
             String precioStr = modelo.getValueAt(i, 2).toString()
-                .replace("₡", "").replace(",", "").trim();
+                    .replace("₡", "").replace(",", "").trim();
             d.setPrecioDia(Double.parseDouble(precioStr));
 
             d.setDias((int) modelo.getValueAt(i, 3));
 
             // Limpiar formato de subtotal
             String subtotalStr = modelo.getValueAt(i, 4).toString()
-                .replace("₡", "").replace(",", "").trim();
+                    .replace("₡", "").replace(",", "").trim();
             d.setSubtotal(Double.parseDouble(subtotalStr));
 
             lista.add(d);
@@ -295,11 +313,11 @@ public class ReservaDialog extends javax.swing.JDialog {
     public void limpiarFormulario() {
         cboCliente.setSelectedIndex(-1);
         cboEmpleado.setSelectedIndex(-1);
-        
+
         LocalDate hoy = LocalDate.now();
         txtFechaInicio.setText(hoy.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
         txtFechaFin.setText(hoy.plusDays(1).format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
-        
+
         txtTotal.setText("₡0.00");
 
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
