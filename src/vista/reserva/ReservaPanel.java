@@ -17,15 +17,24 @@ import javax.swing.table.TableRowSorter;
 import modelo.DetalleReserva;
 import modelo.Reserva;
 
+/**
+ * Panel principal del módulo de Reservas Gestiona la visualización y acciones
+ * sobre las reservas
+ */
 public class ReservaPanel extends javax.swing.JPanel {
 
-   public ReservaPanel() {
+    /**
+     * Constructor - Inicializa el panel y el controlador
+     */
+    public ReservaPanel() {
         initComponents();
         configurarTabla();
+        // ⭐ INICIALIZAR EL CONTROLADOR
+        new controlador.ReservaController(this);
     }
 
     /**
-     * Configuración inicial de la tabla
+     * Configuración inicial de la tabla de reservas
      */
     private void configurarTabla() {
         tblReservas.setRowHeight(24);
@@ -42,8 +51,9 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * NUEVO: Carga lista de reservas en la tabla
-     * @param lista
+     * Carga lista de reservas en la tabla
+     *
+     * @param lista Lista de reservas a mostrar
      */
     public void cargarReservas(List<Reserva> lista) {
         DefaultTableModel modelo = (DefaultTableModel) tblReservas.getModel();
@@ -62,29 +72,22 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * NUEVO: Sobrecarga sin parámetros para compatibilidad
-     */
-    public void cargarReservas() {
-        // Este método se mantiene vacío o puede cargar todas las reservas
-        // Se llama desde el controlador con la lista como parámetro
-    }
-
-    /**
-     * Muestra el detalle de una reserva en un diálogo
-     * @param detalles
+     * Muestra el detalle de una reserva en un diálogo modal
+     *
+     * @param detalles Lista de detalles (vehículos) de la reserva
      */
     public void mostrarDetalle(List<DetalleReserva> detalles) {
         if (detalles == null || detalles.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Esta reserva no tiene vehículos asociados.", 
-                "Detalle", 
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Esta reserva no tiene vehículos asociados.",
+                    "Detalle",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         // Crear diálogo para mostrar detalle
-        JDialog dlg = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), 
-                                  "Detalle de Reserva", true);
+        JDialog dlg = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this),
+                "Detalle de Reserva", true);
         dlg.setSize(700, 400);
         dlg.setLocationRelativeTo(this);
 
@@ -133,25 +136,29 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Obtiene el ID de la reserva seleccionada
-     * @return 
+     * Obtiene el ID de la reserva seleccionada en la tabla
+     *
+     * @return ID de la reserva o -1 si no hay selección
      */
     public int getReservaSeleccionada() {
         int fila = tblReservas.getSelectedRow();
-        if (fila == -1) return -1;
-        
+        if (fila == -1) {
+            return -1;
+        }
+
         return (int) tblReservas.getValueAt(fila, 0);
     }
 
     /**
-     * Filtra la tabla por texto
-     * @param texto
+     * Filtra la tabla por texto de búsqueda
+     *
+     * @param texto Texto para filtrar (case-insensitive)
      */
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblReservas.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         tblReservas.setRowSorter(sorter);
-        
+
         if (texto.trim().isEmpty()) {
             sorter.setRowFilter(null);
         } else {
@@ -160,20 +167,27 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Obtiene fecha de inicio del filtro
-     * @return 
+     * Obtiene fecha de inicio del filtro de fechas
+     *
+     * @return Fecha inicio en formato yyyy-MM-dd
      */
     public String getFechaInicio() {
-        return txtFechaInicio.getText().trim();
+        String fecha = txtFechaInicio.getText().trim();
+        // Si es el placeholder, retornar vacío
+        return "yyyy-MM-dd".equals(fecha) ? "" : fecha;
     }
 
     /**
-     * Obtiene fecha de fin del filtro
-     * @return 
+     * Obtiene fecha de fin del filtro de fechas
+     *
+     * @return Fecha fin en formato yyyy-MM-dd
      */
     public String getFechaFin() {
-        return txtFechaFin.getText().trim();
+        String fecha = txtFechaFin.getText().trim();
+        // Si es el placeholder, retornar vacío
+        return "yyyy-MM-dd".equals(fecha) ? "" : fecha;
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

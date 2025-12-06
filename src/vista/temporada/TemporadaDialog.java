@@ -1,81 +1,144 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package vista.temporada;
 
+import javax.swing.JOptionPane;
+
 /**
- *
- * @author Daniel bonilla
+ * Diálogo para crear/editar temporadas Permite gestionar periodos con recargos
+ * especiales (Navidad, Semana Santa, etc.)
  */
 public class TemporadaDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TemporadaDialog.class.getName());
+    private static final java.util.logging.Logger logger
+            = java.util.logging.Logger.getLogger(TemporadaDialog.class.getName());
 
     /**
-     * Creates new form TemporadaDialog
+     * Constructor del diálogo
+     *
+     * @param parent Frame padre
+     * @param modal true para modal, false para no modal
      */
     public TemporadaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
+        setTitle("Temporada - Gestión de Recargos");
+
+        // Campo ID no editable (autoincremental)
         txtId.setEditable(false);
 
+        // Configurar sincronización entre Recargo y Factor
+        configurarSincronizacion();
     }
 
+    /**
+     * Configura la sincronización automática entre % Recargo y Factor Recargo:
+     * Porcentaje visual (ej: 30%) Factor: Multiplicador matemático (ej: 1.30)
+     */
+    private void configurarSincronizacion() {
+        // Cuando cambia el Recargo (%), actualizar Factor
+        txtRecargo.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                try {
+                    String texto = txtRecargo.getText().trim();
+                    if (!texto.isEmpty()) {
+                        double recargo = Double.parseDouble(texto);
+                        double factor = 1.0 + (recargo / 100.0);
+                        txtFactor.setText(String.format("%.2f", factor));
+                    }
+                } catch (NumberFormatException ex) {
+                    // Ignorar si no es número válido
+                }
+            }
+        });
+
+        // Cuando cambia el Factor, actualizar Recargo (%)
+        txtFactor.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                try {
+                    String texto = txtFactor.getText().trim();
+                    if (!texto.isEmpty()) {
+                        double factor = Double.parseDouble(texto);
+                        double recargo = (factor - 1.0) * 100;
+                        txtRecargo.setText(String.format("%.2f", recargo));
+                    }
+                } catch (NumberFormatException ex) {
+                    // Ignorar si no es número válido
+                }
+            }
+        });
+    }
+
+    /**
+     * Limpia todos los campos del formulario
+     */
     public void limpiarFormulario() {
         txtId.setText("");
         txtNombre.setText("");
         txtFechaInicio.setText("");
         txtFechaFin.setText("");
-        txtRecargo.setText("");
+        txtRecargo.setText("0.00");
+        txtFactor.setText("1.00");
     }
 
+    /**
+     * Carga los datos de una temporada en el formulario
+     *
+     * @param t Temporada a cargar
+     */
     public void cargarTemporada(modelo.Temporada t) {
-        txtId.setText(String.valueOf(t.getId()));
+        txtId.setText(String.valueOf(t.getIdTemporada()));
         txtNombre.setText(t.getNombre());
         txtFechaInicio.setText(t.getFechaInicio());
         txtFechaFin.setText(t.getFechaFin());
-        txtRecargo.setText(String.valueOf(t.getRecargo()));
+
+        // Calcular recargo desde el factor
+        double recargo = (t.getFactor() - 1.0) * 100;
+        txtRecargo.setText(String.format("%.2f", recargo));
+        txtFactor.setText(String.format("%.2f", t.getFactor()));
     }
 
+    /**
+     * Obtiene la temporada desde el formulario con validaciones básicas Las
+     * validaciones exhaustivas se hacen en el controlador
+     *
+     * @return Temporada con los datos del formulario o null si hay error
+     */
     public modelo.Temporada obtenerTemporada() {
-
-        // ===== VALIDACIONES =====
+        // Validaciones básicas
         if (txtNombre.getText().trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "El nombre es obligatorio");
+            JOptionPane.showMessageDialog(this, "El nombre es obligatorio");
             return null;
         }
         if (txtFechaInicio.getText().trim().isEmpty()
                 || txtFechaFin.getText().trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar fechas");
+            JOptionPane.showMessageDialog(this, "Debe ingresar fechas");
             return null;
         }
-        if (txtRecargo.getText().trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un recargo");
+        if (txtFactor.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un factor");
             return null;
         }
 
-        // ===== CREAR TEMPORADA =====
+        // Crear temporada
         modelo.Temporada t = new modelo.Temporada();
 
         // ID solo si se está editando
         if (!txtId.getText().trim().isEmpty()) {
-            t.setId(Integer.parseInt(txtId.getText()));
+            t.setIdTemporada(Integer.parseInt(txtId.getText()));
         }
 
         t.setNombre(txtNombre.getText().trim());
         t.setFechaInicio(txtFechaInicio.getText().trim());
         t.setFechaFin(txtFechaFin.getText().trim());
-        t.setRecargo(Double.parseDouble(txtRecargo.getText().trim()));
+
+        // Usar el factor directamente
+        t.setFactor(Double.parseDouble(txtFactor.getText().trim()));
 
         return t;
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -216,11 +279,6 @@ public class TemporadaDialog extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -231,21 +289,16 @@ public class TemporadaDialog extends javax.swing.JDialog {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                TemporadaDialog dialog = new TemporadaDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            TemporadaDialog dialog = new TemporadaDialog(new javax.swing.JFrame(), true);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
