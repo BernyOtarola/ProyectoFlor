@@ -1,31 +1,50 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package vista.vehiculo;
 
+import javax.swing.JOptionPane;
+import modelo.Vehiculo;
 
+/**
+ * Diálogo para crear/editar vehículos Incluye validaciones completas de todos
+ * los campos
+ */
 public class VehiculoDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VehiculoDialog.class.getName());
+    private static final java.util.logging.Logger logger
+            = java.util.logging.Logger.getLogger(VehiculoDialog.class.getName());
 
     /**
-     * Creates new form VehiculoDialog
+     * Constructor del diálogo
      *
-     * @param parent
-     * @param modal
+     * @param parent Frame padre
+     * @param modal true para modal, false para no modal
      */
     public VehiculoDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        txtId.setEditable(false);
         setLocationRelativeTo(null);
+        setTitle("Vehículo - Formulario");
+
+        // Campo ID no editable (autoincremental)
+        txtId.setEditable(false);
+
+        // Inicializar combo de estados
+        inicializarComboEstado();
+    }
+
+    /**
+     * Inicializa el combo de estados con los valores permitidos
+     */
+    private void inicializarComboEstado() {
+        cboEstado.removeAllItems();
         cboEstado.addItem("Disponible");
         cboEstado.addItem("Reservado");
         cboEstado.addItem("Mantenimiento");
-        cboEstado.setSelectedIndex(0); 
+        cboEstado.setSelectedIndex(0); // Por defecto: Disponible
     }
 
+    /**
+     * Limpia todos los campos del formulario
+     */
     public void limpiarFormulario() {
         txtId.setText("");
         txtPlaca.setText("");
@@ -33,6 +52,86 @@ public class VehiculoDialog extends javax.swing.JDialog {
         txtModelo.setText("");
         txtAño.setText("");
         txtPrecioDia.setText("");
+        cboEstado.setSelectedIndex(0);
+    }
+
+    /**
+     * Carga los datos de un vehículo en el formulario
+     *
+     * @param v Vehículo a cargar
+     */
+    public void cargarVehiculo(Vehiculo v) {
+        txtId.setText(String.valueOf(v.getIdVehiculo()));
+        txtPlaca.setText(v.getPlaca());
+        txtMarca.setText(v.getMarca());
+        txtModelo.setText(v.getModelo());
+        txtAño.setText(String.valueOf(v.getAnio()));
+        txtPrecioDia.setText(String.valueOf(v.getPrecioDia()));
+        cboEstado.setSelectedItem(v.getEstado());
+    }
+
+    /**
+     * Obtiene el vehículo desde el formulario con validaciones básicas Las
+     * validaciones exhaustivas se hacen en el controlador
+     *
+     * @return Vehículo con los datos del formulario o null si hay error
+     */
+    public Vehiculo obtenerVehiculo() {
+        // Validaciones básicas
+        if (txtPlaca.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La placa es obligatoria");
+            return null;
+        }
+
+        if (txtMarca.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La marca es obligatoria");
+            return null;
+        }
+
+        if (txtModelo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El modelo es obligatorio");
+            return null;
+        }
+
+        if (txtAño.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El año es obligatorio");
+            return null;
+        }
+
+        if (txtPrecioDia.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El precio por día es obligatorio");
+            return null;
+        }
+
+        // Crear vehículo
+        Vehiculo v = new Vehiculo();
+
+        // ID solo si se está editando
+        if (!txtId.getText().trim().isEmpty()) {
+            v.setIdVehiculo(Integer.parseInt(txtId.getText()));
+        }
+
+        v.setPlaca(txtPlaca.getText().trim().toUpperCase());
+        v.setMarca(txtMarca.getText().trim());
+        v.setModelo(txtModelo.getText().trim());
+
+        try {
+            v.setAnio(Integer.parseInt(txtAño.getText().trim()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El año debe ser un número válido");
+            return null;
+        }
+
+        try {
+            v.setPrecioDia(Double.parseDouble(txtPrecioDia.getText().trim()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El precio debe ser un número válido");
+            return null;
+        }
+
+        v.setEstado((String) cboEstado.getSelectedItem());
+
+        return v;
     }
 
     /**
@@ -225,11 +324,6 @@ public class VehiculoDialog extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -240,9 +334,7 @@ public class VehiculoDialog extends javax.swing.JDialog {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(() -> {
             VehiculoDialog dialog = new VehiculoDialog(new javax.swing.JFrame(), true);
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -254,6 +346,7 @@ public class VehiculoDialog extends javax.swing.JDialog {
             dialog.setVisible(true);
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnCancelar;

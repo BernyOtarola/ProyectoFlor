@@ -1,77 +1,122 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package vista.vehiculo;
 
+import java.util.List;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import modelo.Vehiculo;
+
 /**
- *
- * @author Daniel bonilla
+ * Panel principal del módulo de Vehículos
+ * Gestiona la visualización y acciones sobre los vehículos
  */
 public class VehiculoPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form VehiculoPanel
+     * Constructor - Inicializa el panel y el controlador
      */
     public VehiculoPanel() {
         initComponents();
-
+        configurarTabla();
+        // ⭐ INICIALIZAR EL CONTROLADOR
+        new controlador.VehiculoController(this);
     }
 
-    public void cargarTabla(java.util.List<modelo.Vehiculo> lista) {
+    /**
+     * Configuración inicial de la tabla de vehículos
+     */
+    private void configurarTabla() {
+        tblVehiculos.setRowHeight(24);
+        tblVehiculos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblVehiculos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        javax.swing.table.DefaultTableModel modelo
-                = (javax.swing.table.DefaultTableModel) tblVehiculos.getModel();
+        // Ajustar anchos de columna para óptima visualización
+        tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
+        tblVehiculos.getColumnModel().getColumn(1).setPreferredWidth(120);  // Placa
+        tblVehiculos.getColumnModel().getColumn(2).setPreferredWidth(150);  // Marca
+        tblVehiculos.getColumnModel().getColumn(3).setPreferredWidth(150);  // Modelo
+        tblVehiculos.getColumnModel().getColumn(4).setPreferredWidth(80);   // Año
+        tblVehiculos.getColumnModel().getColumn(5).setPreferredWidth(120);  // Precio/Día
+        tblVehiculos.getColumnModel().getColumn(6).setPreferredWidth(120);  // Estado
+    }
 
-        modelo.setRowCount(0);
+    /**
+     * Carga lista de vehículos en la tabla
+     * @param lista Lista de vehículos a mostrar
+     */
+    public void cargarTabla(List<Vehiculo> lista) {
+        DefaultTableModel modelo = (DefaultTableModel) tblVehiculos.getModel();
+        modelo.setRowCount(0); // Limpiar tabla
 
-        for (modelo.Vehiculo v : lista) {
+        for (Vehiculo v : lista) {
             modelo.addRow(new Object[]{
                 v.getIdVehiculo(),
                 v.getPlaca(),
                 v.getMarca(),
                 v.getModelo(),
                 v.getAnio(),
-                v.getPrecioDia()
+                String.format("₡%.2f", v.getPrecioDia()),
+                v.getEstado() // ⭐ COLUMNA ESTADO AGREGADA
             });
         }
     }
 
-    public void actualizarTabla(java.util.List<modelo.Vehiculo> lista) {
-        javax.swing.table.DefaultTableModel modelo
-                = (javax.swing.table.DefaultTableModel) tblVehiculos.getModel();
-
-        modelo.setRowCount(0);
-
-        for (modelo.Vehiculo v : lista) {
-            modelo.addRow(new Object[]{
-                v.getIdVehiculo(),
-                v.getPlaca(),
-                v.getMarca(),
-                v.getModelo(),
-                v.getAnio(),
-                v.getPrecioDia()
-            });
-        }
+    /**
+     * Actualiza la tabla con nueva información
+     * @param lista Lista de vehículos actualizada
+     */
+    public void actualizarTabla(List<Vehiculo> lista) {
+        cargarTabla(lista);
     }
 
-    public modelo.Vehiculo getVehiculoSeleccionado() {
+    /**
+     * Obtiene el vehículo seleccionado de la tabla
+     * @return Vehículo seleccionado o null si no hay selección
+     */
+    public Vehiculo getVehiculoSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();
         if (fila == -1) {
             return null;
         }
 
-        modelo.Vehiculo v = new modelo.Vehiculo();
+        Vehiculo v = new Vehiculo();
         v.setIdVehiculo(Integer.parseInt(tblVehiculos.getValueAt(fila, 0).toString()));
         v.setPlaca(tblVehiculos.getValueAt(fila, 1).toString());
         v.setMarca(tblVehiculos.getValueAt(fila, 2).toString());
         v.setModelo(tblVehiculos.getValueAt(fila, 3).toString());
         v.setAnio(Integer.parseInt(tblVehiculos.getValueAt(fila, 4).toString()));
-        v.setPrecioDia(Double.parseDouble(tblVehiculos.getValueAt(fila, 5).toString()));
+        
+        // Limpiar formato de precio
+        String precioStr = tblVehiculos.getValueAt(fila, 5).toString()
+            .replace("₡", "").replace(",", "").trim();
+        v.setPrecioDia(Double.parseDouble(precioStr));
+        
+        v.setEstado(tblVehiculos.getValueAt(fila, 6).toString()); // ⭐ ESTADO AGREGADO
 
         return v;
     }
 
+    /**
+     * Filtra la tabla por texto de búsqueda
+     * @param texto Texto para filtrar (case-insensitive)
+     */
+    public void filtrar(String texto) {
+        DefaultTableModel modelo = (DefaultTableModel) tblVehiculos.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
+        tblVehiculos.setRowSorter(sorter);
+
+        if (texto.trim().isEmpty()) {
+            sorter.setRowFilter(null); // Mostrar todo
+        } else {
+            // Filtro case-insensitive
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+        }
+    }
+
+    /**
+     * Obtiene el ID del vehículo seleccionado
+     * @return ID del vehículo o -1 si no hay selección
+     */
     public int getIdSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();
         if (fila == -1) {
@@ -81,10 +126,12 @@ public class VehiculoPanel extends javax.swing.JPanel {
     }
 
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * Limpia el campo de búsqueda
      */
+    public void limpiarBusqueda() {
+        txtBuscar.setText("");
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
