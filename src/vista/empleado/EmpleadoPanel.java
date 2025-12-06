@@ -1,4 +1,3 @@
-
 package vista.empleado;
 
 import java.util.List;
@@ -12,17 +11,14 @@ public class EmpleadoPanel extends javax.swing.JPanel {
    public EmpleadoPanel() {
         initComponents();
         configurarTabla();
+        new controlador.EmpleadoController(this); 
     }
 
-    // ------------------------------------------------------------
-    // CONFIGURAR TABLA
-    // ------------------------------------------------------------
     private void configurarTabla() {
         tblEmpleados.setRowHeight(24);
         tblEmpleados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblEmpleados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        // Anchos profesionales:
         tblEmpleados.getColumnModel().getColumn(0).setPreferredWidth(60);  
         tblEmpleados.getColumnModel().getColumn(1).setPreferredWidth(200); 
         tblEmpleados.getColumnModel().getColumn(2).setPreferredWidth(130); 
@@ -30,9 +26,6 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         tblEmpleados.getColumnModel().getColumn(4).setPreferredWidth(150); 
     }
 
-    // ------------------------------------------------------------
-    // CARGAR TABLA
-    // ------------------------------------------------------------
     public void cargarTabla(List<Empleado> lista) {
         DefaultTableModel modelo = (DefaultTableModel) tblEmpleados.getModel();
         modelo.setRowCount(0);
@@ -48,9 +41,6 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         }
     }
 
-    // ------------------------------------------------------------
-    // OBTENER EMPLEADO SELECCIONADO
-    // ------------------------------------------------------------
     public Empleado getEmpleadoSeleccionado() {
         int fila = tblEmpleados.getSelectedRow();
         if (fila == -1) return null;
@@ -65,15 +55,13 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         return e;
     }
 
-    // ------------------------------------------------------------
-    // FILTRO
-    // ------------------------------------------------------------
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblEmpleados.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         tblEmpleados.setRowSorter(sorter);
         sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

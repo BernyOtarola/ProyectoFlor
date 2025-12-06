@@ -1,23 +1,20 @@
-
 package vista.empleado;
 
 import javax.swing.JOptionPane;
 import modelo.Empleado;
 
 public class EmpleadoDialog extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EmpleadoDialog.class.getName());
 
     public EmpleadoDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
+        setTitle("Empleado - Formulario");
         txtId.setEditable(false);
     }
 
-    // -------------------------------------------------------------
-    // LIMPIAR FORMULARIO
-    // -------------------------------------------------------------
     public void limpiarFormulario() {
         txtId.setText("");
         txtNombre.setText("");
@@ -26,9 +23,6 @@ public class EmpleadoDialog extends javax.swing.JDialog {
         txtClave.setText("");
     }
 
-    // -------------------------------------------------------------
-    // CARGAR EMPLEADO PARA EDITAR
-    // -------------------------------------------------------------
     public void cargarEmpleado(Empleado e) {
         txtId.setText(String.valueOf(e.getIdEmpleado()));
         txtNombre.setText(e.getNombre());
@@ -37,11 +31,7 @@ public class EmpleadoDialog extends javax.swing.JDialog {
         txtClave.setText(e.getClave());
     }
 
-    // -------------------------------------------------------------
-    // OBTENER EMPLEADO DEL FORMULARIO
-    // -------------------------------------------------------------
     public Empleado obtenerEmpleado() {
-
         if (txtNombre.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El nombre es obligatorio");
             return null;
@@ -51,8 +41,7 @@ public class EmpleadoDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "El usuario es obligatorio");
             return null;
         }
-
-        Empleado e = new Empleado();
+        e new Empleado();
 
         if (!txtId.getText().trim().isEmpty()) {
             e.setIdEmpleado(Integer.parseInt(txtId.getText()));
@@ -65,6 +54,7 @@ public class EmpleadoDialog extends javax.swing.JDialog {
 
         return e;
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -176,36 +166,29 @@ public class EmpleadoDialog extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+ public static void main(String args[]) {
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(() -> {
-            EmpleadoDialog dialog = new EmpleadoDialog(new javax.swing.JFrame(), true);
-            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(java.awt.event.WindowEvent e) {
-                    System.exit(0);
-                }
-            });
-            dialog.setVisible(true);
-        });
+    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        logger.log(java.util.logging.Level.SEVERE, null, ex);
     }
+
+    java.awt.EventQueue.invokeLater(() -> {
+        EmpleadoDialog dialog = new EmpleadoDialog(new javax.swing.JFrame(), true);
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        dialog.setVisible(true);
+    });
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnCancelar;

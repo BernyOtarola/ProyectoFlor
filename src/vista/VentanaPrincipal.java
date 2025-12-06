@@ -18,12 +18,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     private void cargarPestanas() {
-        tabPrincipal.addTab("Clientes", new ClientePanel());
-        tabPrincipal.addTab("Empleados", new EmpleadoPanel());
-        tabPrincipal.addTab("Vehículos", new VehiculoPanel());
-        tabPrincipal.addTab("Temporadas", new TemporadaPanel());
-        tabPrincipal.addTab("Reservas", new ReservaPanel());
+        tabPrincipal.addTab("📋 Clientes", new ClientePanel());
+        tabPrincipal.addTab("👤 Empleados", new EmpleadoPanel());
+        tabPrincipal.addTab("🚗 Vehículos", new VehiculoPanel());
+        tabPrincipal.addTab("📅 Temporadas", new TemporadaPanel());
+        tabPrincipal.addTab("🎫 Reservas", new ReservaPanel());
     }
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

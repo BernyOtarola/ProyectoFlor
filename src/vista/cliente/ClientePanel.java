@@ -11,6 +11,60 @@ public class ClientePanel extends javax.swing.JPanel {
     public ClientePanel() {
         initComponents();
         configurarTabla();
+        new controlador.ClienteController(this); 
+    }
+
+    private void configurarTabla() {
+        tblClientes.setRowHeight(24);
+        tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblClientes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+
+        tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);   
+        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(200);  
+        tblClientes.getColumnModel().getColumn(2).setPreferredWidth(120);  
+        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(120);  
+        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(200);  
+        tblClientes.getColumnModel().getColumn(5).setPreferredWidth(200); 
+    }
+
+    public void cargarTabla(List<Cliente> lista) {
+        DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
+        modelo.setRowCount(0);
+
+        for (Cliente c : lista) {
+            modelo.addRow(new Object[]{
+                c.getIdCliente(),
+                c.getNombre(),
+                c.getIdentificacion(),
+                c.getTelefono(),
+                c.getCorreo(),
+                c.getDireccion()
+            });
+        }
+    }
+
+    public Cliente getClienteSeleccionado() {
+        int fila = tblClientes.getSelectedRow();
+        if (fila == -1) {
+            return null;
+        }
+
+        Cliente c = new Cliente();
+        c.setIdCliente((int) tblClientes.getValueAt(fila, 0));
+        c.setNombre((String) tblClientes.getValueAt(fila, 1));
+        c.setIdentificacion((String) tblClientes.getValueAt(fila, 2));
+        c.setTelefono((String) tblClientes.getValueAt(fila, 3));
+        c.setCorreo((String) tblClientes.getValueAt(fila, 4));
+        c.setDireccion((String) tblClientes.getValueAt(fila, 5));
+
+        return c;
+    }
+
+    public void filtrar(String filtro) {
+        DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
+        tblClientes.setRowSorter(sorter);
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + filtro));
     }
 
     @SuppressWarnings("unchecked")
@@ -106,61 +160,6 @@ public class ClientePanel extends javax.swing.JPanel {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnBuscarActionPerformed
-
-    private void configurarTabla() {
-        tblClientes.setRowHeight(24);
-        tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblClientes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-
-        tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);   
-        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(200);  
-        tblClientes.getColumnModel().getColumn(2).setPreferredWidth(120);  
-        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(120);  
-        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(200);  
-        tblClientes.getColumnModel().getColumn(5).setPreferredWidth(200); 
-    }
-
-    public void cargarTabla(List<Cliente> lista) {
-        DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
-        modelo.setRowCount(0);
-
-        for (Cliente c : lista) {
-            modelo.addRow(new Object[]{
-                c.getIdCliente(),
-                c.getNombre(),
-                c.getIdentificacion(),
-                c.getTelefono(),
-                c.getCorreo(),
-                c.getDireccion()
-            });
-        }
-    }
-
-    public Cliente getClienteSeleccionado() {
-        int fila = tblClientes.getSelectedRow();
-        if (fila == -1) {
-            return null;
-        }
-
-        Cliente c = new Cliente();
-        c.setIdCliente((int) tblClientes.getValueAt(fila, 0));
-        c.setNombre((String) tblClientes.getValueAt(fila, 1));
-        c.setIdentificacion((String) tblClientes.getValueAt(fila, 2));
-        c.setTelefono((String) tblClientes.getValueAt(fila, 3));
-        c.setCorreo((String) tblClientes.getValueAt(fila, 4));
-        c.setDireccion((String) tblClientes.getValueAt(fila, 5));
-
-        return c;
-    }
-
-
-    public void filtrar(String filtro) {
-        DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
-        tblClientes.setRowSorter(sorter);
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + filtro));
-    }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnBuscar;

@@ -1,4 +1,3 @@
-// src/util/DBUtil.java
 package util;
 
 import java.sql.Connection;
@@ -7,15 +6,14 @@ import java.sql.SQLException;
 
 public class DBUtil {
 
-    // ⭐ CONFIGURACIÓN DE CONEXIÓN
-    private static final String URL = "jdbc:mysql://localhost:3306/Reservas?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/reservas?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
-    private static final String PASS = ""; // Cambia esto si tu MySQL tiene contraseña
+    private static final String PASS = ""; 
 
     /**
      * Obtiene una conexión a la base de datos
-     * @return Conexión activa a MySQL
-     * @throws SQLException si hay error de conexión
+     * @return 
+     * @throws java.sql.SQLException 
      */
     public static Connection getConnection() throws SQLException {
         try {
