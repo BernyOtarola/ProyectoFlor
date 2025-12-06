@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Temporada;
@@ -13,8 +12,7 @@ public class TemporadaDAO {
     public boolean insertarTemporada(Temporada t) {
         String sql = "CALL sp_insert_temporada(?,?,?,?)";
 
-        try (Connection cn = DBUtil.getConnection();
-             CallableStatement cs = cn.prepareCall(sql)) {
+        try (Connection cn = DBUtil.getConnection(); CallableStatement cs = cn.prepareCall(sql)) {
 
             cs.setString(1, t.getNombre());
             cs.setString(2, t.getFechaInicio());
@@ -33,8 +31,7 @@ public class TemporadaDAO {
     public boolean actualizarTemporada(Temporada t) {
         String sql = "CALL sp_update_temporada(?,?,?,?,?)";
 
-        try (Connection cn = DBUtil.getConnection();
-             CallableStatement cs = cn.prepareCall(sql)) {
+        try (Connection cn = DBUtil.getConnection(); CallableStatement cs = cn.prepareCall(sql)) {
 
             cs.setInt(1, t.getIdTemporada());
             cs.setString(2, t.getNombre());
@@ -51,11 +48,30 @@ public class TemporadaDAO {
         }
     }
 
+    public double getFactorPorFecha(String fecha) {
+        String sql = "SELECT factor FROM Temporada "
+                + "WHERE ? BETWEEN fechaInicio AND fechaFin LIMIT 1";
+
+        try (Connection cn = DBUtil.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, fecha);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("factor");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error getFactorPorFecha(): " + e.getMessage());
+        }
+
+        return 1.0;
+    }
+
     public boolean eliminarTemporada(int id) {
         String sql = "CALL sp_delete_temporada(?)";
 
-        try (Connection cn = DBUtil.getConnection();
-             CallableStatement cs = cn.prepareCall(sql)) {
+        try (Connection cn = DBUtil.getConnection(); CallableStatement cs = cn.prepareCall(sql)) {
 
             cs.setInt(1, id);
             cs.execute();
@@ -70,8 +86,7 @@ public class TemporadaDAO {
     public Temporada getTemporadaById(int id) {
         String sql = "CALL sp_get_temporada_by_id(?)";
 
-        try (Connection cn = DBUtil.getConnection();
-             CallableStatement cs = cn.prepareCall(sql)) {
+        try (Connection cn = DBUtil.getConnection(); CallableStatement cs = cn.prepareCall(sql)) {
 
             cs.setInt(1, id);
             ResultSet rs = cs.executeQuery();
@@ -97,9 +112,7 @@ public class TemporadaDAO {
         List<Temporada> lista = new ArrayList<>();
         String sql = "SELECT * FROM Temporada ORDER BY fechaInicio";
 
-        try (Connection cn = DBUtil.getConnection();
-             Statement st = cn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try (Connection cn = DBUtil.getConnection(); Statement st = cn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 Temporada t = new Temporada();

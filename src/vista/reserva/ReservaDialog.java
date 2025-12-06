@@ -4,6 +4,7 @@
  */
 package vista.reserva;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -14,8 +15,8 @@ import modelo.DetalleReserva;
 
 public class ReservaDialog extends javax.swing.JDialog {
 
-     private static final java.util.logging.Logger logger = 
-        java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
+    private static final java.util.logging.Logger logger
+            = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
 
     public ReservaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -23,7 +24,7 @@ public class ReservaDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         configurarTablaDetalle();
         txtTotal.setEditable(false);
-        
+
         // Configurar estado inicial
         //cboEstado.setVisible(false); // Si no lo usas, ocultarlo
     }
@@ -46,6 +47,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Carga clientes en el combo
+     *
      * @param clientes
      */
     public void cargarClientes(List<modelo.Cliente> clientes) {
@@ -57,6 +59,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Carga empleados en el combo
+     *
      * @param empleados
      */
     public void cargarEmpleados(List<modelo.Empleado> empleados) {
@@ -66,13 +69,48 @@ public class ReservaDialog extends javax.swing.JDialog {
         }
     }
 
+    // Agregar método en ReservaDialog:
+    private boolean validarFechas() {
+        String inicio = txtFechaInicio.getText().trim();
+        String fin = txtFechaFin.getText().trim();
+
+        if (!util.ValidacionUtil.rangoFechasValido(inicio, fin)) {
+            JOptionPane.showMessageDialog(this,
+                    "Las fechas son inválidas o la fecha fin es anterior a la fecha inicio.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Validar que no sea más de 1 año
+        try {
+            LocalDate fechaInicio = LocalDate.parse(inicio);
+            LocalDate fechaFin = LocalDate.parse(fin);
+            long dias = java.time.temporal.ChronoUnit.DAYS.between(fechaInicio, fechaFin);
+
+            if (dias > 365) {
+                JOptionPane.showMessageDialog(this,
+                        "La reserva no puede exceder 365 días.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Formato de fecha inválido. Use: yyyy-MM-dd",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Agrega un detalle a la tabla
+     *
      * @param d
      */
     public void agregarDetalle(DetalleReserva d) {
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
-        
+
         modelo.addRow(new Object[]{
             d.getIdVehiculo(),
             d.getPlacaVehiculo(),
@@ -80,7 +118,7 @@ public class ReservaDialog extends javax.swing.JDialog {
             d.getDias(),
             String.format("₡%.2f", d.getSubtotal())
         });
-        
+
         recalcularTotal();
     }
 
@@ -90,13 +128,13 @@ public class ReservaDialog extends javax.swing.JDialog {
     public void quitarDetalle() {
         int fila = tblDetalle.getSelectedRow();
         if (fila == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Seleccione un detalle para quitar.",
-                "Información",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Seleccione un detalle para quitar.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
         modelo.removeRow(fila);
         recalcularTotal();
@@ -121,11 +159,14 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene el ID del cliente seleccionado
-     * @return 
+     *
+     * @return
      */
     public int getClienteSeleccionado() {
-        if (cboCliente.getSelectedIndex() == -1) return -1;
-        
+        if (cboCliente.getSelectedIndex() == -1) {
+            return -1;
+        }
+
         String seleccion = cboCliente.getSelectedItem().toString();
         String id = seleccion.split(" - ")[0];
         return Integer.parseInt(id);
@@ -133,11 +174,14 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene el ID del empleado seleccionado
-     * @return 
+     *
+     * @return
      */
     public int getEmpleadoSeleccionado() {
-        if (cboEmpleado.getSelectedIndex() == -1) return -1;
-        
+        if (cboEmpleado.getSelectedIndex() == -1) {
+            return -1;
+        }
+
         String seleccion = cboEmpleado.getSelectedItem().toString();
         String id = seleccion.split(" - ")[0];
         return Integer.parseInt(id);
@@ -145,7 +189,8 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     /**
      * Obtiene la lista de detalles de la tabla
-     * @return 
+     *
+     * @return
      */
     public List<DetalleReserva> getDetalles() {
         List<DetalleReserva> lista = new ArrayList<>();
@@ -153,22 +198,22 @@ public class ReservaDialog extends javax.swing.JDialog {
 
         for (int i = 0; i < modelo.getRowCount(); i++) {
             DetalleReserva d = new DetalleReserva();
-            
+
             d.setIdVehiculo((int) modelo.getValueAt(i, 0));
             d.setPlacaVehiculo(modelo.getValueAt(i, 1).toString());
-            
+
             // Limpiar formato de precio
             String precioStr = modelo.getValueAt(i, 2).toString()
-                .replace("₡", "").replace(",", "").trim();
+                    .replace("₡", "").replace(",", "").trim();
             d.setPrecioDia(Double.parseDouble(precioStr));
-            
+
             d.setDias((int) modelo.getValueAt(i, 3));
-            
+
             // Limpiar formato de subtotal
             String subtotalStr = modelo.getValueAt(i, 4).toString()
-                .replace("₡", "").replace(",", "").trim();
+                    .replace("₡", "").replace(",", "").trim();
             d.setSubtotal(Double.parseDouble(subtotalStr));
-            
+
             lista.add(d);
         }
 
@@ -184,7 +229,7 @@ public class ReservaDialog extends javax.swing.JDialog {
         txtFechaInicio.setText("");
         txtFechaFin.setText("");
         txtTotal.setText("₡0.00");
-        
+
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
         modelo.setRowCount(0);
     }

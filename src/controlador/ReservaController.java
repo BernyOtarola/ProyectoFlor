@@ -12,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * Controlador completo para el módulo de Reservas
+ * Implementa gestión completa de reservas con detalles
+ */
 public class ReservaController implements ActionListener {
 
     private ReservaPanel vista;
@@ -20,7 +24,12 @@ public class ReservaController implements ActionListener {
     private ClienteDAO clienteDAO;
     private EmpleadoDAO empleadoDAO;
     private VehiculoDAO vehiculoDAO;
+    private TemporadaDAO temporadaDAO;
 
+    /**
+     * Constructor - Inicializa el controlador
+     * @param vista Panel de reservas
+     */
     public ReservaController(ReservaPanel vista) {
         this.vista = vista;
         this.dao = new ReservaDAO();
@@ -28,6 +37,7 @@ public class ReservaController implements ActionListener {
         this.clienteDAO = new ClienteDAO();
         this.empleadoDAO = new EmpleadoDAO();
         this.vehiculoDAO = new VehiculoDAO();
+        this.temporadaDAO = new TemporadaDAO();
 
         // Asignar listeners
         vista.btnNuevaReserva.addActionListener(this);
@@ -95,6 +105,11 @@ public class ReservaController implements ActionListener {
         List<Cliente> clientes = clienteDAO.listarClientes();
         dlg.cboCliente.removeAllItems();
         
+        if (clientes.isEmpty()) {
+            MensajeUtil.error(dlg, "No hay clientes registrados.\nDebe crear al menos un cliente primero.");
+            return;
+        }
+        
         for (Cliente c : clientes) {
             dlg.cboCliente.addItem(c.getIdCliente() + " - " + c.getNombre());
         }
@@ -106,6 +121,11 @@ public class ReservaController implements ActionListener {
     private void cargarEmpleadosEnCombo(ReservaDialog dlg) {
         List<Empleado> empleados = empleadoDAO.listarEmpleados();
         dlg.cboEmpleado.removeAllItems();
+        
+        if (empleados.isEmpty()) {
+            MensajeUtil.error(dlg, "No hay empleados registrados.\nDebe crear al menos un empleado primero.");
+            return;
+        }
         
         for (Empleado e : empleados) {
             dlg.cboEmpleado.addItem(e.getIdEmpleado() + " - " + e.getNombre());
@@ -128,39 +148,98 @@ public class ReservaController implements ActionListener {
         // Calcular días
         int dias = calcularDias(fechaInicio, fechaFin);
 
+        // ⭐ OBTENER FACTOR DE TEMPORADA
+        double factor = obtenerFactorTemporada(fechaInicio);
+        
         // Abrir selector de vehículos
         VehiculoSelectorDialog selector = new VehiculoSelectorDialog(null, true);
         List<Vehiculo> vehiculosDisponibles = vehiculoDAO.listarVehiculosDisponibles();
+        
+        if (vehiculosDisponibles.isEmpty()) {
+            MensajeUtil.error(dlg, "No hay vehículos disponibles en este momento.");
+            return;
+        }
+        
         selector.cargarVehiculos(vehiculosDisponibles);
 
+        // Listener para seleccionar vehículo
         selector.btnSeleccionar.addActionListener(e -> {
             Vehiculo vehSeleccionado = selector.getVehiculoSeleccionado();
             
             if (vehSeleccionado == null) {
-                MensajeUtil.error(selector, "Seleccione un vehículo.");
+                MensajeUtil.error(selector, "Seleccione un vehículo de la tabla.");
                 return;
             }
 
             // Verificar disponibilidad en las fechas
             if (!dao.verificarDisponibilidad(vehSeleccionado.getIdVehiculo(), fechaInicio, fechaFin)) {
-                MensajeUtil.error(selector, "El vehículo no está disponible en las fechas seleccionadas.");
+                MensajeUtil.error(selector, 
+                    "El vehículo " + vehSeleccionado.getPlaca() + 
+                    " no está disponible en las fechas seleccionadas.");
                 return;
             }
+
+            // ⭐ APLICAR FACTOR DE TEMPORADA AL PRECIO
+            double precioBase = vehSeleccionado.getPrecioDia();
+            double precioConTemporada = precioBase * factor;
 
             // Crear detalle y agregar a la tabla
             DetalleReserva detalle = new DetalleReserva();
             detalle.setIdVehiculo(vehSeleccionado.getIdVehiculo());
             detalle.setPlacaVehiculo(vehSeleccionado.getPlaca());
-            detalle.setPrecioDia(vehSeleccionado.getPrecioDia());
+            detalle.setPrecioDia(precioConTemporada);
             detalle.setDias(dias);
-            detalle.setSubtotal(vehSeleccionado.getPrecioDia() * dias);
+            detalle.setSubtotal(precioConTemporada * dias);
 
             dlg.agregarDetalle(detalle);
+            
+            // Mostrar mensaje si hay recargo por temporada
+            if (factor > 1.0) {
+                double recargoPorc = (factor - 1.0) * 100;
+                MensajeUtil.info(selector, 
+                    String.format("✅ Vehículo agregado\n\n" +
+                                 "⚠️ Temporada Alta: +%.0f%% de recargo aplicado\n" +
+                                 "Precio base: ₡%.2f\n" +
+                                 "Precio con recargo: ₡%.2f", 
+                                 recargoPorc, precioBase, precioConTemporada));
+            }
+            
             selector.dispose();
         });
 
+        // Listener para cancelar
         selector.btnCancelar.addActionListener(e -> selector.dispose());
+        
         selector.setVisible(true);
+    }
+
+    /**
+     * Obtiene el factor de temporada para una fecha específica
+     * @param fecha Fecha en formato yyyy-MM-dd
+     * @return Factor (1.0 si no hay temporada)
+     */
+    private double obtenerFactorTemporada(String fecha) {
+        List<Temporada> temporadas = temporadaDAO.listarTemporadas();
+        
+        try {
+            LocalDate fechaBuscar = LocalDate.parse(fecha);
+            
+            for (Temporada t : temporadas) {
+                LocalDate inicio = LocalDate.parse(t.getFechaInicio());
+                LocalDate fin = LocalDate.parse(t.getFechaFin());
+                
+                // Verificar si la fecha está dentro del rango
+                if (!fechaBuscar.isBefore(inicio) && !fechaBuscar.isAfter(fin)) {
+                    System.out.println("✅ Temporada encontrada: " + t.getNombre() + 
+                                     " (Factor: " + t.getFactor() + ")");
+                    return t.getFactor();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ Error al obtener factor de temporada: " + e.getMessage());
+        }
+        
+        return 1.0; // Sin recargo si no hay temporada
     }
 
     /**
@@ -173,6 +252,7 @@ public class ReservaController implements ActionListener {
             long dias = ChronoUnit.DAYS.between(inicio, fin);
             return dias > 0 ? (int) dias : 1;
         } catch (Exception e) {
+            System.err.println("Error calcularDias(): " + e.getMessage());
             return 1;
         }
     }
@@ -181,34 +261,39 @@ public class ReservaController implements ActionListener {
      * Guarda la reserva con validaciones completas
      */
     private boolean guardarReserva(ReservaDialog dlg) {
-        // Validar fechas
+        // ===== VALIDAR FECHAS =====
         String fechaInicio = dlg.txtFechaInicio.getText().trim();
         String fechaFin = dlg.txtFechaFin.getText().trim();
 
         if (!ValidacionUtil.rangoFechasValido(fechaInicio, fechaFin)) {
-            MensajeUtil.error(dlg, "Rango de fechas inválido.");
+            MensajeUtil.error(dlg, 
+                "Rango de fechas inválido.\n" +
+                "Verifique que:\n" +
+                "- El formato sea yyyy-MM-dd\n" +
+                "- La fecha fin sea posterior a la fecha inicio\n" +
+                "- Las fechas no sean pasadas");
             return false;
         }
 
-        // Validar que haya detalles
+        // ===== VALIDAR DETALLES =====
         List<DetalleReserva> detalles = dlg.getDetalles();
         if (detalles.isEmpty()) {
             MensajeUtil.error(dlg, "Debe agregar al menos un vehículo a la reserva.");
             return false;
         }
 
-        // Validar selección de cliente y empleado
+        // ===== VALIDAR SELECCIÓN DE CLIENTE Y EMPLEADO =====
         if (dlg.cboCliente.getSelectedIndex() == -1) {
-            MensajeUtil.error(dlg, "Seleccione un cliente.");
+            MensajeUtil.error(dlg, "Debe seleccionar un cliente.");
             return false;
         }
 
         if (dlg.cboEmpleado.getSelectedIndex() == -1) {
-            MensajeUtil.error(dlg, "Seleccione un empleado.");
+            MensajeUtil.error(dlg, "Debe seleccionar un empleado.");
             return false;
         }
 
-        // Crear reserva
+        // ===== CREAR RESERVA =====
         Reserva r = new Reserva();
         r.setIdCliente(dlg.getClienteSeleccionado());
         r.setIdEmpleado(dlg.getEmpleadoSeleccionado());
@@ -217,21 +302,38 @@ public class ReservaController implements ActionListener {
 
         // Generar JSON para el stored procedure
         String json = JSONUtil.generarJSONDetalles(detalles);
+        
+        System.out.println("📝 JSON enviado al SP: " + json);
 
-        // Insertar en la BD
-        return dao.insertarReservaCompleta(r, detalles, json);
+        // ===== INSERTAR EN LA BD =====
+        boolean exito = dao.insertarReservaCompleta(r, detalles, json);
+        
+        if (!exito) {
+            MensajeUtil.error(dlg, 
+                "Error al procesar la reserva.\n" +
+                "Verifique que los vehículos estén disponibles.");
+        }
+        
+        return exito;
     }
 
+    /**
+     * Maneja todos los eventos de los botones
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        // ===== BOTÓN NUEVA RESERVA =====
         if (e.getSource() == vista.btnNuevaReserva) {
             abrirDialogoNuevaReserva();
         }
 
+        // ===== BOTÓN VER DETALLE =====
         if (e.getSource() == vista.btnVerDetalle) {
             int idReserva = vista.getReservaSeleccionada();
+            
             if (idReserva == -1) {
-                MensajeUtil.error(vista, "Seleccione una reserva.");
+                MensajeUtil.error(vista, "Debe seleccionar una reserva de la tabla.");
                 return;
             }
 
@@ -239,15 +341,22 @@ public class ReservaController implements ActionListener {
             vista.mostrarDetalle(detalles);
         }
 
+        // ===== BOTÓN ELIMINAR RESERVA =====
         if (e.getSource() == vista.btnEliminarReserva) {
             int idReserva = vista.getReservaSeleccionada();
+            
             if (idReserva == -1) {
-                MensajeUtil.error(vista, "Seleccione una reserva.");
+                MensajeUtil.error(vista, "Debe seleccionar una reserva de la tabla.");
                 return;
             }
 
-            if (MensajeUtil.confirmar(vista, "¿Está seguro de eliminar esta reserva?")) {
-                if (dao.eliminarReserva(idReserva)) {
+            if (MensajeUtil.confirmar(vista, 
+                "¿Está seguro de eliminar esta reserva?\n\n" +
+                "Esta acción eliminará la reserva y todos sus detalles.")) {
+                
+                boolean exito = dao.eliminarReserva(idReserva);
+                
+                if (exito) {
                     MensajeUtil.info(vista, "Reserva eliminada correctamente.");
                     cargarReservas();
                 } else {
@@ -256,17 +365,24 @@ public class ReservaController implements ActionListener {
             }
         }
 
+        // ===== BOTÓN BUSCAR =====
         if (e.getSource() == vista.btnBuscar) {
             String filtro = vista.txtBuscar.getText().trim();
-            vista.filtrar(filtro);
+            
+            if (ValidacionUtil.esVacio(filtro)) {
+                cargarReservas();
+            } else {
+                vista.filtrar(filtro);
+            }
         }
 
+        // ===== BOTÓN FILTRAR POR FECHAS =====
         if (e.getSource() == vista.btnFiltrarFechas) {
             String fechaInicio = vista.getFechaInicio();
             String fechaFin = vista.getFechaFin();
 
             if (ValidacionUtil.esVacio(fechaInicio) || ValidacionUtil.esVacio(fechaFin)) {
-                MensajeUtil.error(vista, "Ingrese ambas fechas para filtrar.");
+                MensajeUtil.error(vista, "Debe ingresar ambas fechas para filtrar.");
                 return;
             }
 
@@ -277,6 +393,10 @@ public class ReservaController implements ActionListener {
 
             List<Reserva> reservasFiltradas = dao.listarReservasPorFechas(fechaInicio, fechaFin);
             vista.cargarReservas(reservasFiltradas);
+            
+            if (reservasFiltradas.isEmpty()) {
+                MensajeUtil.info(vista, "No se encontraron reservas en el rango de fechas especificado.");
+            }
         }
     }
 }

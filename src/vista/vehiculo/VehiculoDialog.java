@@ -4,10 +4,7 @@
  */
 package vista.vehiculo;
 
-/**
- *
- * @author Daniel bonilla
- */
+
 public class VehiculoDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VehiculoDialog.class.getName());
@@ -23,6 +20,10 @@ public class VehiculoDialog extends javax.swing.JDialog {
         initComponents();
         txtId.setEditable(false);
         setLocationRelativeTo(null);
+        cboEstado.addItem("Disponible");
+        cboEstado.addItem("Reservado");
+        cboEstado.addItem("Mantenimiento");
+        cboEstado.setSelectedIndex(0); 
     }
 
     public void limpiarFormulario() {
@@ -242,18 +243,15 @@ public class VehiculoDialog extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                VehiculoDialog dialog = new VehiculoDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            VehiculoDialog dialog = new VehiculoDialog(new javax.swing.JFrame(), true);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
