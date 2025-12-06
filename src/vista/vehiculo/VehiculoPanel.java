@@ -30,14 +30,14 @@ public class VehiculoPanel extends javax.swing.JPanel {
         tblVehiculos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblVehiculos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        // Ajustar anchos de columna para óptima visualización
+        // ✅ AHORA CON 7 COLUMNAS (INCLUYE ESTADO)
         tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
         tblVehiculos.getColumnModel().getColumn(1).setPreferredWidth(120);  // Placa
         tblVehiculos.getColumnModel().getColumn(2).setPreferredWidth(150);  // Marca
         tblVehiculos.getColumnModel().getColumn(3).setPreferredWidth(150);  // Modelo
         tblVehiculos.getColumnModel().getColumn(4).setPreferredWidth(80);   // Año
         tblVehiculos.getColumnModel().getColumn(5).setPreferredWidth(120);  // Precio/Día
-        tblVehiculos.getColumnModel().getColumn(6).setPreferredWidth(120);  // Estado
+        tblVehiculos.getColumnModel().getColumn(6).setPreferredWidth(120);  // Estado ⭐ AGREGADO
     }
 
     /**
@@ -162,13 +162,13 @@ public class VehiculoPanel extends javax.swing.JPanel {
 
         tblVehiculos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID ", "PLACA", "MARCA", "MODELO", " AÑO", "PRECIO/DÍA "
+                "ID ", "PLACA", "MARCA", "MODELO", " AÑO", "PRECIO/DÍA ", "ESTADO"
             }
         ));
         jScrollPane1.setViewportView(tblVehiculos);
@@ -205,7 +205,7 @@ public class VehiculoPanel extends javax.swing.JPanel {
                     .addComponent(btnEditar)
                     .addComponent(btnEliminar))
                 .addGap(58, 58, 58)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
