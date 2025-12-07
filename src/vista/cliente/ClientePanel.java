@@ -11,7 +11,7 @@ public class ClientePanel extends javax.swing.JPanel {
     public ClientePanel() {
         initComponents();
         configurarTabla();
-        new controlador.ClienteController(this); 
+        new controlador.ClienteController(this);
     }
 
     private void configurarTabla() {
@@ -19,12 +19,12 @@ public class ClientePanel extends javax.swing.JPanel {
         tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblClientes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);   
-        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(200);  
-        tblClientes.getColumnModel().getColumn(2).setPreferredWidth(120);  
-        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(120);  
-        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(200);  
-        tblClientes.getColumnModel().getColumn(5).setPreferredWidth(200); 
+        tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(200);
+        tblClientes.getColumnModel().getColumn(2).setPreferredWidth(120);
+        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(120);
+        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(200);
+        tblClientes.getColumnModel().getColumn(5).setPreferredWidth(200);
     }
 
     public void cargarTabla(List<Cliente> lista) {

@@ -11,7 +11,7 @@ public class TemporadaPanel extends javax.swing.JPanel {
     public TemporadaPanel() {
         initComponents();
         configurarTabla();
-        // ⭐ INICIALIZAR EL CONTROLADOR
+
         new controlador.TemporadaController(this);
     }
 
@@ -172,10 +172,11 @@ public class TemporadaPanel extends javax.swing.JPanel {
                 .addComponent(btnEditar)
                 .addGap(50, 50, 50)
                 .addComponent(btnEliminar)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,8 +189,9 @@ public class TemporadaPanel extends javax.swing.JPanel {
                     .addComponent(btnNuevo)
                     .addComponent(btnEditar)
                     .addComponent(btnEliminar))
-                .addGap(58, 58, 58)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
