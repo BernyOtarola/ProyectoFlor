@@ -1,110 +1,240 @@
 package vista.reserva;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import modelo.DetalleReserva;
 
-/**
- * Diálogo para crear una nueva reserva Permite seleccionar cliente, empleado,
- * fechas y múltiples vehículos
- */
 public class ReservaDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger
-            = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
+
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color HOVER_COLOR = new Color(52, 152, 219);
+    private static final Color DANGER_COLOR = new Color(231, 76, 60);
+    private static final Color WARNING_COLOR = new Color(241, 196, 15);
 
     /**
-     * Constructor del diálogo
-     *
-     * @param parent Frame padre
-     * @param modal true para modal, false para no modal
+     * @param parent
+     * @param modal
      */
     public ReservaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        aplicarEstiloModerno();
         setLocationRelativeTo(null);
         setTitle("Nueva Reserva de Vehículos");
         configurarTablaDetalle();
 
-        // ⭐ AGREGAR ESTO: Limpiar filas vacías de la tabla
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
         modelo.setRowCount(0);
 
-        // Campo total no editable
         txtTotal.setEditable(false);
         txtTotal.setText("₡0.00");
 
-        // Configurar fechas por defecto
         LocalDate hoy = LocalDate.now();
         txtFechaInicio.setText(hoy.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
         txtFechaFin.setText(hoy.plusDays(1).format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
     }
 
-    /**
-     * Configura la tabla de detalles (vehículos de la reserva)
-     */
+    private void aplicarEstiloModerno() {
+
+        getContentPane().setBackground(BACKGROUND_COLOR);
+
+        agregarHeader();
+
+        estilizarBoton(btnAgregarVehiculo, ACCENT_COLOR, "Agregar Vehículo");
+        estilizarBoton(btnQuitarDetalle, WARNING_COLOR, "Quitar Detalle");
+        estilizarBoton(btnGuardar, PRIMARY_COLOR, "Guardar");
+        estilizarBoton(btnCancelar, DANGER_COLOR, "Cancelar");
+
+        estilizarCombo(cboCliente);
+        estilizarCombo(cboEmpleado);
+
+        estilizarCampoTexto(txtFechaInicio);
+        estilizarCampoTexto(txtFechaFin);
+        estilizarCampoTexto(txtTotal);
+
+        estilizarLabel(jLabel1);
+        estilizarLabel(jLabel2);
+        estilizarLabel(jLabel3);
+        estilizarLabel(jLabel4);
+        estilizarLabel(jLabel5);
+
+        estilizarTabla();
+    }
+
+    private void agregarHeader() {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
+        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
+
+        JLabel lblTitulo = new JLabel("NUEVA RESERVA");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitulo.setForeground(Color.WHITE);
+        headerPanel.add(lblTitulo);
+
+        getContentPane().add(headerPanel, BorderLayout.NORTH);
+    }
+
+    private void estilizarCombo(javax.swing.JComboBox<String> combo) {
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        combo.setBackground(CARD_COLOR);
+        combo.setForeground(TEXT_COLOR);
+        combo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        combo.setPreferredSize(new Dimension(200, 35));
+        combo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
+    private void estilizarCampoTexto(javax.swing.text.JTextComponent campo) {
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        campo.setPreferredSize(new Dimension(campo.getWidth(), 35));
+
+        campo.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+        });
+    }
+
+    private void estilizarLabel(JLabel label) {
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setForeground(TEXT_COLOR);
+    }
+
+    private void estilizarTabla() {
+        tblDetalle.setBackground(CARD_COLOR);
+        tblDetalle.setForeground(TEXT_COLOR);
+        tblDetalle.setGridColor(new Color(224, 224, 224));
+        tblDetalle.setRowHeight(30);
+        tblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tblDetalle.setSelectionBackground(HOVER_COLOR);
+        tblDetalle.setSelectionForeground(Color.WHITE);
+        tblDetalle.setShowVerticalLines(false);
+        tblDetalle.setIntercellSpacing(new Dimension(0, 1));
+
+        JTableHeader header = tblDetalle.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 40));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.getViewport().setBackground(CARD_COLOR);
+    }
+
     private void configurarTablaDetalle() {
-        tblDetalle.setRowHeight(24);
+        tblDetalle.setRowHeight(30);
         tblDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        // Ajustar anchos de columna
-        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(80);  // IdVehiculo
-        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120); // Placa
-        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(100); // Precio
-        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);  // Dias
-        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(120); // Subtotal
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(120);
     }
 
     /**
-     * Carga clientes en el combo
-     *
      * @param clientes Lista de clientes disponibles
      */
     public void cargarClientes(List<modelo.Cliente> clientes) {
         cboCliente.removeAllItems();
-
         if (clientes.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "No hay clientes registrados.\nDebe crear al menos un cliente primero.",
                     "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         for (modelo.Cliente c : clientes) {
             cboCliente.addItem(c.getIdCliente() + " - " + c.getNombre());
         }
     }
 
     /**
-     * Carga empleados en el combo
-     *
      * @param empleados Lista de empleados disponibles
      */
     public void cargarEmpleados(List<modelo.Empleado> empleados) {
         cboEmpleado.removeAllItems();
-
         if (empleados.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "No hay empleados registrados.\nDebe crear al menos un empleado primero.",
                     "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         for (modelo.Empleado e : empleados) {
             cboEmpleado.addItem(e.getIdEmpleado() + " - " + e.getNombre());
         }
     }
 
     /**
-     * Valida que las fechas sean correctas
-     *
      * @return true si las fechas son válidas
      */
     public boolean validarFechas() {
@@ -122,7 +252,6 @@ public class ReservaDialog extends javax.swing.JDialog {
             return false;
         }
 
-        // Validar que no sea más de 1 año
         try {
             LocalDate fechaInicio = LocalDate.parse(inicio);
             LocalDate fechaFin = LocalDate.parse(fin);
@@ -153,8 +282,6 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Calcula los días entre las dos fechas
-     *
      * @return Número de días
      */
     public int calcularDias() {
@@ -169,16 +296,13 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Agrega un detalle (vehículo) a la tabla
-     *
-     * @param d Detalle de reserva a agregar
+     * @param d
      */
     public void agregarDetalle(DetalleReserva d) {
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
 
-        // ⭐ CORREGIDO: Verificar si el vehículo ya fue agregado
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            // ⭐ VALIDAR QUE LA CELDA NO SEA NULL ANTES DE COMPARAR
+
             Object valorCelda = modelo.getValueAt(i, 0);
 
             if (valorCelda != null) {
@@ -204,9 +328,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         recalcularTotal();
     }
 
-    /**
-     * Quita el detalle seleccionado de la tabla
-     */
     public void quitarDetalle() {
         int fila = tblDetalle.getSelectedRow();
         if (fila == -1) {
@@ -227,9 +348,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * Recalcula el total de la reserva sumando todos los subtotales
-     */
     private void recalcularTotal() {
         double total = 0;
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
@@ -245,9 +363,7 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Obtiene el ID del cliente seleccionado
-     *
-     * @return ID del cliente o -1 si no hay selección
+     * @return
      */
     public int getClienteSeleccionado() {
         if (cboCliente.getSelectedIndex() == -1) {
@@ -260,9 +376,7 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Obtiene el ID del empleado seleccionado
-     *
-     * @return ID del empleado o -1 si no hay selección
+     * @return
      */
     public int getEmpleadoSeleccionado() {
         if (cboEmpleado.getSelectedIndex() == -1) {
@@ -275,9 +389,7 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Obtiene la lista de detalles (vehículos) de la tabla
-     *
-     * @return Lista de detalles de la reserva
+     * @return
      */
     public List<DetalleReserva> getDetalles() {
         List<DetalleReserva> lista = new ArrayList<>();
@@ -289,14 +401,11 @@ public class ReservaDialog extends javax.swing.JDialog {
             d.setIdVehiculo((int) modelo.getValueAt(i, 0));
             d.setPlacaVehiculo(modelo.getValueAt(i, 1).toString());
 
-            // Limpiar formato de precio
             String precioStr = modelo.getValueAt(i, 2).toString()
                     .replace("₡", "").replace(",", "").trim();
             d.setPrecioDia(Double.parseDouble(precioStr));
 
             d.setDias((int) modelo.getValueAt(i, 3));
-
-            // Limpiar formato de subtotal
             String subtotalStr = modelo.getValueAt(i, 4).toString()
                     .replace("₡", "").replace(",", "").trim();
             d.setSubtotal(Double.parseDouble(subtotalStr));
@@ -307,9 +416,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         return lista;
     }
 
-    /**
-     * Limpia el formulario completo
-     */
     public void limpiarFormulario() {
         cboCliente.setSelectedIndex(-1);
         cboEmpleado.setSelectedIndex(-1);
@@ -366,26 +472,18 @@ public class ReservaDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tblDetalle);
 
         btnAgregarVehiculo.setText("🚗 Agregar Vehiculo");
-        btnAgregarVehiculo.addActionListener(this::btnAgregarVehiculoActionPerformed);
 
         btnCancelar.setText("🚫 Cancelar ");
-        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
 
         btnQuitarDetalle.setText("🗑️ Quitar Detalle");
-        btnQuitarDetalle.addActionListener(this::btnQuitarDetalleActionPerformed);
 
         btnGuardar.setText("📝 Guardar ");
-        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
         jLabel1.setText("Cliente:");
 
         jLabel2.setText("Empleado:");
 
-        cboCliente.addActionListener(this::cboClienteActionPerformed);
-
         jLabel3.setText("FechaInicio:");
-
-        txtFechaInicio.addActionListener(this::txtFechaInicioActionPerformed);
 
         jLabel4.setText("Total:");
 
@@ -465,30 +563,6 @@ public class ReservaDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cboClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cboClienteActionPerformed
-
-    private void txtFechaInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaInicioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtFechaInicioActionPerformed
-
-    private void btnAgregarVehiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarVehiculoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAgregarVehiculoActionPerformed
-
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnQuitarDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarDetalleActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnQuitarDetalleActionPerformed
 
     /**
      * @param args the command line arguments

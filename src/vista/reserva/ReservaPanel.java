@@ -1,6 +1,11 @@
 package vista.reserva;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -12,30 +17,136 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import modelo.DetalleReserva;
 import modelo.Reserva;
 
-/**
- * Panel principal del módulo de Reservas Gestiona la visualización y acciones
- * sobre las reservas
- */
 public class ReservaPanel extends javax.swing.JPanel {
 
-    /**
-     * Constructor - Inicializa el panel y el controlador
-     */
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color HOVER_COLOR = new Color(52, 152, 219);
+    private static final Color DANGER_COLOR = new Color(231, 76, 60);
+    private static final Color WARNING_COLOR = new Color(241, 196, 15);
+
     public ReservaPanel() {
         initComponents();
+        aplicarEstiloModerno();
         configurarTabla();
-        // ⭐ INICIALIZAR EL CONTROLADOR
         new controlador.ReservaController(this);
     }
 
-    /**
-     * Configuración inicial de la tabla de reservas
-     */
+    private void aplicarEstiloModerno() {
+
+        setBackground(BACKGROUND_COLOR);
+        setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        estilizarBoton(btnNuevaReserva, ACCENT_COLOR, "Nueva Reserva");
+        estilizarBoton(btnVerDetalle, PRIMARY_COLOR, "Ver Detalle");
+        estilizarBoton(btnEliminarReserva, DANGER_COLOR, "Eliminar");
+        estilizarBoton(btnBuscar, SECONDARY_COLOR, "Buscar");
+        estilizarBoton(btnFiltrarFechas, WARNING_COLOR, "Filtrar Fechas");
+
+        estilizarCampoTexto(txtBuscar);
+        estilizarCampoTexto(txtFechaInicio);
+        estilizarCampoTexto(txtFechaFin);
+
+        estilizarLabel(jLabel1);
+        estilizarLabel(jLabel2);
+        estilizarLabel(jLabel3);
+
+        estilizarTabla();
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+
+        // Efecto hover
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
+  
+    private void estilizarCampoTexto(javax.swing.text.JTextComponent campo) {
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+
+        campo.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+        });
+    }
+
+    private void estilizarLabel(JLabel label) {
+        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setForeground(TEXT_COLOR);
+    }
+
+    private void estilizarTabla() {
+        tblReservas.setBackground(CARD_COLOR);
+        tblReservas.setForeground(TEXT_COLOR);
+        tblReservas.setGridColor(new Color(224, 224, 224));
+        tblReservas.setRowHeight(35);
+        tblReservas.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tblReservas.setSelectionBackground(HOVER_COLOR);
+        tblReservas.setSelectionForeground(Color.WHITE);
+        tblReservas.setShowVerticalLines(false);
+        tblReservas.setIntercellSpacing(new Dimension(0, 1));
+
+        // Header oscuro
+        JTableHeader header = tblReservas.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        // Borde del scroll
+        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.getViewport().setBackground(CARD_COLOR);
+    }
+
     private void configurarTabla() {
         tblReservas.setRowHeight(24);
         tblReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
