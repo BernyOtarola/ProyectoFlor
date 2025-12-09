@@ -6,9 +6,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-/**
- * Diálogo para seleccionar un vehículo al crear una reserva
- */
 public class VehiculoSelectorDialog extends JDialog {
 
     public JTable tblVehiculos;
@@ -50,7 +47,6 @@ public class VehiculoSelectorDialog extends JDialog {
         JScrollPane scroll = new JScrollPane(tblVehiculos);
         add(scroll, BorderLayout.CENTER);
 
-        // Panel inferior con botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnSeleccionar = new JButton("✅ Seleccionar");
         btnCancelar = new JButton("🚫 Cancelar");
@@ -62,6 +58,7 @@ public class VehiculoSelectorDialog extends JDialog {
 
     /**
      * Carga vehículos disponibles en la tabla
+     * @param vehiculos
      */
     public void cargarVehiculos(List<Vehiculo> vehiculos) {
         DefaultTableModel modelo = (DefaultTableModel) tblVehiculos.getModel();
@@ -82,6 +79,7 @@ public class VehiculoSelectorDialog extends JDialog {
 
     /**
      * Obtiene el vehículo seleccionado de la tabla
+     * @return 
      */
     public Vehiculo getVehiculoSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();

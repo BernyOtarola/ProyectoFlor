@@ -1,8 +1,10 @@
 package vista.reserva;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -91,7 +93,6 @@ public class ReservaPanel extends javax.swing.JPanel {
         });
     }
 
-  
     private void estilizarCampoTexto(javax.swing.text.JTextComponent campo) {
         campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         campo.setBorder(BorderFactory.createCompoundBorder(
@@ -142,7 +143,6 @@ public class ReservaPanel extends javax.swing.JPanel {
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
         header.setBorder(BorderFactory.createEmptyBorder());
 
-        // Borde del scroll
         jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
         jScrollPane1.getViewport().setBackground(CARD_COLOR);
     }
@@ -152,18 +152,15 @@ public class ReservaPanel extends javax.swing.JPanel {
         tblReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblReservas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        // Ajustar anchos de columna
-        tblReservas.getColumnModel().getColumn(0).setPreferredWidth(50);  // ID
-        tblReservas.getColumnModel().getColumn(1).setPreferredWidth(220); // Cliente
-        tblReservas.getColumnModel().getColumn(2).setPreferredWidth(140); // Fecha Reserva
-        tblReservas.getColumnModel().getColumn(3).setPreferredWidth(120); // Inicio
-        tblReservas.getColumnModel().getColumn(4).setPreferredWidth(120); // Fin
-        tblReservas.getColumnModel().getColumn(5).setPreferredWidth(100); // Total
+        tblReservas.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tblReservas.getColumnModel().getColumn(1).setPreferredWidth(220);
+        tblReservas.getColumnModel().getColumn(2).setPreferredWidth(140);
+        tblReservas.getColumnModel().getColumn(3).setPreferredWidth(120);
+        tblReservas.getColumnModel().getColumn(4).setPreferredWidth(120);
+        tblReservas.getColumnModel().getColumn(5).setPreferredWidth(100);
     }
 
     /**
-     * Carga lista de reservas en la tabla
-     *
      * @param lista Lista de reservas a mostrar
      */
     public void cargarReservas(List<Reserva> lista) {
@@ -183,8 +180,6 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Muestra el detalle de una reserva en un diálogo modal
-     *
      * @param detalles Lista de detalles (vehículos) de la reserva
      */
     public void mostrarDetalle(List<DetalleReserva> detalles) {
@@ -196,14 +191,23 @@ public class ReservaPanel extends javax.swing.JPanel {
             return;
         }
 
-        // Crear diálogo para mostrar detalle
         JDialog dlg = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this),
                 "Detalle de Reserva", true);
-        dlg.setSize(700, 400);
+        dlg.setSize(800, 500);
         dlg.setLocationRelativeTo(this);
+        dlg.getContentPane().setBackground(BACKGROUND_COLOR);
 
-        // Crear tabla de detalles
-        String[] columnas = {"Vehículo", "Placa", "Precio/Día", "Días", "Subtotal"};
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setPreferredSize(new Dimension(800, 70));
+        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 20));
+
+        JLabel lblTituloDetalle = new JLabel("DETALLE DE VEHÍCULOS RESERVADOS");
+        lblTituloDetalle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTituloDetalle.setForeground(Color.WHITE);
+        headerPanel.add(lblTituloDetalle);
+
+        String[] columnas = {"ID Vehículo", "Placa", "Precio/Día", "Días", "Subtotal"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -214,7 +218,7 @@ public class ReservaPanel extends javax.swing.JPanel {
         double totalGeneral = 0;
         for (DetalleReserva d : detalles) {
             modelo.addRow(new Object[]{
-                "ID: " + d.getIdVehiculo(),
+                d.getIdVehiculo(),
                 d.getPlacaVehiculo(),
                 String.format("₡%.2f", d.getPrecio()),
                 d.getDias(),
@@ -224,32 +228,99 @@ public class ReservaPanel extends javax.swing.JPanel {
         }
 
         JTable tblDetalle = new JTable(modelo);
-        tblDetalle.setRowHeight(24);
-        JScrollPane scroll = new JScrollPane(tblDetalle);
+        tblDetalle.setBackground(CARD_COLOR);
+        tblDetalle.setForeground(TEXT_COLOR);
+        tblDetalle.setGridColor(new Color(224, 224, 224));
+        tblDetalle.setRowHeight(35);
+        tblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblDetalle.setSelectionBackground(HOVER_COLOR);
+        tblDetalle.setSelectionForeground(Color.WHITE);
+        tblDetalle.setShowVerticalLines(true);
+        tblDetalle.setShowHorizontalLines(true);
+        tblDetalle.setIntercellSpacing(new Dimension(1, 1));
 
-        // Panel con total
+        JTableHeader header = tblDetalle.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(100);  
+        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);  
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(150);  
+        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);   
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(150);  
+
+        JScrollPane scroll = new JScrollPane(tblDetalle);
+        scroll.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220), 2),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        scroll.getViewport().setBackground(CARD_COLOR);
+
         JPanel panelTotal = new JPanel();
-        panelTotal.add(new JLabel("Total de la Reserva: "));
+        panelTotal.setBackground(BACKGROUND_COLOR);
+        panelTotal.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 15));
+        panelTotal.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
+
+        // Label "Total de la Reserva:"
+        JLabel lblTextoTotal = new JLabel("TOTAL DE LA RESERVA: ");
+        lblTextoTotal.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblTextoTotal.setForeground(TEXT_COLOR);
+
+        // Label con el valor del total
         JLabel lblTotal = new JLabel(String.format("₡%.2f", totalGeneral));
-        lblTotal.setFont(lblTotal.getFont().deriveFont(16f));
+        lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTotal.setForeground(ACCENT_COLOR);
+
+        panelTotal.add(lblTextoTotal);
         panelTotal.add(lblTotal);
 
-        // Botón cerrar
         JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCerrar.setForeground(Color.WHITE);
+        btnCerrar.setBackground(PRIMARY_COLOR);
+        btnCerrar.setFocusPainted(false);
+        btnCerrar.setBorderPainted(false);
+        btnCerrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnCerrar.setPreferredSize(new Dimension(120, 40));
+
+        btnCerrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = PRIMARY_COLOR;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnCerrar.setBackground(PRIMARY_COLOR.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnCerrar.setBackground(originalColor);
+            }
+        });
+
         btnCerrar.addActionListener(e -> dlg.dispose());
         panelTotal.add(btnCerrar);
 
-        dlg.setLayout(new java.awt.BorderLayout());
-        dlg.add(scroll, java.awt.BorderLayout.CENTER);
-        dlg.add(panelTotal, java.awt.BorderLayout.SOUTH);
+        JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
+        contentPanel.setBackground(BACKGROUND_COLOR);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPanel.add(scroll, BorderLayout.CENTER);
+
+        dlg.setLayout(new BorderLayout());
+        dlg.add(headerPanel, BorderLayout.NORTH);
+        dlg.add(contentPanel, BorderLayout.CENTER);
+        dlg.add(panelTotal, BorderLayout.SOUTH);
 
         dlg.setVisible(true);
     }
 
     /**
-     * Obtiene el ID de la reserva seleccionada en la tabla
-     *
-     * @return ID de la reserva o -1 si no hay selección
+     * @return 
      */
     public int getReservaSeleccionada() {
         int fila = tblReservas.getSelectedRow();
@@ -261,9 +332,7 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Filtra la tabla por texto de búsqueda
-     *
-     * @param texto Texto para filtrar (case-insensitive)
+     * @param texto 
      */
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblReservas.getModel();
@@ -278,8 +347,6 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Obtiene fecha de inicio del filtro de fechas
-     *
      * @return Fecha inicio en formato yyyy-MM-dd
      */
     public String getFechaInicio() {
@@ -289,8 +356,6 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Obtiene fecha de fin del filtro de fechas
-     *
      * @return Fecha fin en formato yyyy-MM-dd
      */
     public String getFechaFin() {
