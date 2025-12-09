@@ -6,12 +6,14 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,7 +27,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
 
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+   private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
@@ -59,7 +61,6 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     private void aplicarEstiloModerno() {
-
         getContentPane().setBackground(BACKGROUND_COLOR);
 
         agregarHeader();
@@ -74,7 +75,7 @@ public class ReservaDialog extends javax.swing.JDialog {
 
         estilizarCampoTexto(txtFechaInicio);
         estilizarCampoTexto(txtFechaFin);
-        estilizarCampoTexto(txtTotal);
+        estilizarCampoTextoTotal(txtTotal);
 
         estilizarLabel(jLabel1);
         estilizarLabel(jLabel2);
@@ -88,26 +89,26 @@ public class ReservaDialog extends javax.swing.JDialog {
     private void agregarHeader() {
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(PRIMARY_COLOR);
-        headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
-        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 70));
+        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 20));
 
-        JLabel lblTitulo = new JLabel("NUEVA RESERVA");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        JLabel lblTitulo = new JLabel("🚗 NUEVA RESERVA DE VEHÍCULOS");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
         lblTitulo.setForeground(Color.WHITE);
         headerPanel.add(lblTitulo);
 
         getContentPane().add(headerPanel, BorderLayout.NORTH);
     }
 
-    private void estilizarCombo(javax.swing.JComboBox<String> combo) {
-        combo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+    private void estilizarCombo(JComboBox<String> combo) {
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         combo.setBackground(CARD_COLOR);
         combo.setForeground(TEXT_COLOR);
         combo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
-        combo.setPreferredSize(new Dimension(200, 35));
+        combo.setPreferredSize(new Dimension(combo.getPreferredSize().width, 40));
         combo.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
@@ -119,7 +120,7 @@ public class ReservaDialog extends javax.swing.JDialog {
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setPreferredSize(new Dimension(150, 40));
+        btn.setPreferredSize(new Dimension(160, 42));
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             Color originalColor = color;
@@ -137,34 +138,46 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     private void estilizarCampoTexto(javax.swing.text.JTextComponent campo) {
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         campo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
-        campo.setPreferredSize(new Dimension(campo.getWidth(), 35));
+        campo.setPreferredSize(new Dimension(campo.getPreferredSize().width, 40));
 
         campo.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 campo.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
-                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                        BorderFactory.createEmptyBorder(10, 12, 10, 12)
                 ));
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
                 campo.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                        BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                        BorderFactory.createEmptyBorder(10, 12, 10, 12)
                 ));
             }
         });
     }
 
+    private void estilizarCampoTextoTotal(javax.swing.JTextField campo) {
+        campo.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        campo.setForeground(ACCENT_COLOR);
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(ACCENT_COLOR, 2),
+                BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        ));
+        campo.setBackground(new Color(232, 247, 237));
+        campo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        campo.setPreferredSize(new Dimension(campo.getPreferredSize().width, 45));
+    }
+
     private void estilizarLabel(JLabel label) {
-        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
         label.setForeground(TEXT_COLOR);
     }
 
@@ -172,39 +185,40 @@ public class ReservaDialog extends javax.swing.JDialog {
         tblDetalle.setBackground(CARD_COLOR);
         tblDetalle.setForeground(TEXT_COLOR);
         tblDetalle.setGridColor(new Color(224, 224, 224));
-        tblDetalle.setRowHeight(30);
+        tblDetalle.setRowHeight(35);
         tblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tblDetalle.setSelectionBackground(HOVER_COLOR);
         tblDetalle.setSelectionForeground(Color.WHITE);
-        tblDetalle.setShowVerticalLines(false);
-        tblDetalle.setIntercellSpacing(new Dimension(0, 1));
+        tblDetalle.setShowVerticalLines(true);
+        tblDetalle.setShowHorizontalLines(true);
+        tblDetalle.setIntercellSpacing(new Dimension(1, 1));
 
         JTableHeader header = tblDetalle.getTableHeader();
         header.setBackground(SECONDARY_COLOR);
         header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        header.setPreferredSize(new Dimension(header.getWidth(), 40));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
         header.setBorder(BorderFactory.createEmptyBorder());
 
-        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220), 2),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
         jScrollPane1.getViewport().setBackground(CARD_COLOR);
     }
 
     private void configurarTablaDetalle() {
-        tblDetalle.setRowHeight(30);
+        tblDetalle.setRowHeight(35);
         tblDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(100);
         tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);
-        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(120);
         tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
-        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(120);
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(130);
     }
 
-    /**
-     * @param clientes Lista de clientes disponibles
-     */
     public void cargarClientes(List<modelo.Cliente> clientes) {
         cboCliente.removeAllItems();
         if (clientes.isEmpty()) {
@@ -218,9 +232,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * @param empleados Lista de empleados disponibles
-     */
     public void cargarEmpleados(List<modelo.Empleado> empleados) {
         cboEmpleado.removeAllItems();
         if (empleados.isEmpty()) {
@@ -234,9 +245,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * @return true si las fechas son válidas
-     */
     public boolean validarFechas() {
         String inicio = txtFechaInicio.getText().trim();
         String fin = txtFechaFin.getText().trim();
@@ -270,7 +278,7 @@ public class ReservaDialog extends javax.swing.JDialog {
                         "Error de Validación", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-        } catch (Exception e) {
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(this,
                     "Formato de fecha inválido. Use: yyyy-MM-dd\n"
                     + "Ejemplo: 2024-12-25",
@@ -281,9 +289,6 @@ public class ReservaDialog extends javax.swing.JDialog {
         return true;
     }
 
-    /**
-     * @return Número de días
-     */
     public int calcularDias() {
         try {
             LocalDate inicio = LocalDate.parse(txtFechaInicio.getText().trim());
@@ -295,16 +300,11 @@ public class ReservaDialog extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * @param d
-     */
     public void agregarDetalle(DetalleReserva d) {
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
 
         for (int i = 0; i < modelo.getRowCount(); i++) {
-
             Object valorCelda = modelo.getValueAt(i, 0);
-
             if (valorCelda != null) {
                 int idExistente = (int) valorCelda;
                 if (idExistente == d.getIdVehiculo()) {
@@ -316,7 +316,6 @@ public class ReservaDialog extends javax.swing.JDialog {
             }
         }
 
-        // Agregar el vehículo a la tabla
         modelo.addRow(new Object[]{
             d.getIdVehiculo(),
             d.getPlacaVehiculo(),
@@ -354,7 +353,6 @@ public class ReservaDialog extends javax.swing.JDialog {
 
         for (int i = 0; i < modelo.getRowCount(); i++) {
             String subtotalStr = modelo.getValueAt(i, 4).toString();
-            // Limpiar formato de moneda
             subtotalStr = subtotalStr.replace("₡", "").replace(",", "").trim();
             total += Double.parseDouble(subtotalStr);
         }
@@ -362,35 +360,24 @@ public class ReservaDialog extends javax.swing.JDialog {
         txtTotal.setText(String.format("₡%.2f", total));
     }
 
-    /**
-     * @return
-     */
     public int getClienteSeleccionado() {
         if (cboCliente.getSelectedIndex() == -1) {
             return -1;
         }
-
         String seleccion = cboCliente.getSelectedItem().toString();
         String id = seleccion.split(" - ")[0];
         return Integer.parseInt(id);
     }
 
-    /**
-     * @return
-     */
     public int getEmpleadoSeleccionado() {
         if (cboEmpleado.getSelectedIndex() == -1) {
             return -1;
         }
-
         String seleccion = cboEmpleado.getSelectedItem().toString();
         String id = seleccion.split(" - ")[0];
         return Integer.parseInt(id);
     }
 
-    /**
-     * @return
-     */
     public List<DetalleReserva> getDetalles() {
         List<DetalleReserva> lista = new ArrayList<>();
         DefaultTableModel modelo = (DefaultTableModel) tblDetalle.getModel();
@@ -452,11 +439,11 @@ public class ReservaDialog extends javax.swing.JDialog {
         txtFechaFin = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(700, 500));
-        setMinimumSize(new java.awt.Dimension(700, 500));
-        setPreferredSize(new java.awt.Dimension(700, 500));
+        setMaximumSize(new java.awt.Dimension(700, 600));
+        setMinimumSize(new java.awt.Dimension(700, 600));
+        setPreferredSize(new java.awt.Dimension(700, 600));
         setResizable(false);
-        setSize(new java.awt.Dimension(700, 500));
+        setSize(new java.awt.Dimension(700, 600));
 
         tblDetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -546,7 +533,7 @@ public class ReservaDialog extends javax.swing.JDialog {
                     .addComponent(cboEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(txtFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
