@@ -1,28 +1,110 @@
 package vista.empleado;
 
 import java.util.List;
-import javax.swing.RowFilter;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import modelo.Empleado;
+import java.awt.*;
 
 public class EmpleadoPanel extends javax.swing.JPanel {
 
-   public EmpleadoPanel() {
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color HOVER_COLOR = new Color(52, 152, 219);
+
+    public EmpleadoPanel() {
         initComponents();
+        aplicarEstiloModerno(); 
         configurarTabla();
-        new controlador.EmpleadoController(this); 
+        new controlador.EmpleadoController(this);
+    }
+
+    private void aplicarEstiloModerno() {
+
+        setBackground(BACKGROUND_COLOR);
+        setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        estilizarBoton(btnNuevo, ACCENT_COLOR, "Nuevo Empleado");
+        estilizarBoton(btnEditar, PRIMARY_COLOR, "Editar");
+        estilizarBoton(btnEliminar, new Color(231, 76, 60), "Eliminar");
+        estilizarBoton(btnBuscar, SECONDARY_COLOR, "Buscar");
+
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+
+        jLabel1.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        jLabel1.setForeground(TEXT_COLOR);
+
+        estilizarTabla();
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
+    private void estilizarTabla() {
+        
+        tblEmpleados.setBackground(CARD_COLOR);
+        tblEmpleados.setForeground(TEXT_COLOR);
+        tblEmpleados.setGridColor(new Color(224, 224, 224));
+        tblEmpleados.setRowHeight(35);
+        tblEmpleados.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tblEmpleados.setSelectionBackground(HOVER_COLOR);
+        tblEmpleados.setSelectionForeground(Color.WHITE);
+        tblEmpleados.setShowVerticalLines(false);
+        tblEmpleados.setIntercellSpacing(new Dimension(0, 1));
+
+        JTableHeader header = tblEmpleados.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.getViewport().setBackground(CARD_COLOR);
     }
 
     private void configurarTabla() {
-        tblEmpleados.setRowHeight(24);
+        tblEmpleados.setRowHeight(35);
         tblEmpleados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblEmpleados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
         tblEmpleados.getColumnModel().getColumn(0).setPreferredWidth(60);  
-        tblEmpleados.getColumnModel().getColumn(1).setPreferredWidth(200); 
-        tblEmpleados.getColumnModel().getColumn(2).setPreferredWidth(130); 
-        tblEmpleados.getColumnModel().getColumn(3).setPreferredWidth(150);
+        tblEmpleados.getColumnModel().getColumn(1).setPreferredWidth(240); 
+        tblEmpleados.getColumnModel().getColumn(2).setPreferredWidth(180); 
+        tblEmpleados.getColumnModel().getColumn(3).setPreferredWidth(180);
         tblEmpleados.getColumnModel().getColumn(4).setPreferredWidth(150); 
     }
 
@@ -36,7 +118,7 @@ public class EmpleadoPanel extends javax.swing.JPanel {
                 e.getNombre(),
                 e.getCargo(),
                 e.getUsuario(),
-                e.getClave()
+                "••••••••" 
             });
         }
     }
@@ -50,7 +132,8 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         e.setNombre((String) tblEmpleados.getValueAt(fila, 1));
         e.setCargo((String) tblEmpleados.getValueAt(fila, 2));
         e.setUsuario((String) tblEmpleados.getValueAt(fila, 3));
-        e.setClave((String) tblEmpleados.getValueAt(fila, 4));
+
+        e.setClave(""); 
 
         return e;
     }
@@ -61,7 +144,7 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         tblEmpleados.setRowSorter(sorter);
         sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -136,8 +219,7 @@ public class EmpleadoPanel extends javax.swing.JPanel {
                     .addComponent(btnEditar)
                     .addComponent(btnEliminar))
                 .addGap(58, 58, 58)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

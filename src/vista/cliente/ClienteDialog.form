@@ -46,7 +46,7 @@
                               <Component id="lblIdentificacion" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lblTelefono" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lblCorreo" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblDireccion" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -98,7 +98,7 @@
               </Group>
               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblDireccion" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtDireccion" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="66" max="32767" attributes="0"/>
@@ -178,7 +178,7 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="lblDireccion">
       <Properties>
         <Property name="text" type="java.lang.String" value="Direcci&#xf3;n:"/>
       </Properties>
