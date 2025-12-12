@@ -9,15 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-/**
- * Ventana Principal del Sistema de Reservas de Vehículos Versión 2.0 - Interfaz
- * Moderna
- */
 public class VentanaPrincipal extends JFrame {
 
-    // ============================================================
-    // COLORES DEL TEMA MODERNO
-    // ============================================================
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
@@ -25,19 +18,12 @@ public class VentanaPrincipal extends JFrame {
     private static final Color CARD_COLOR = Color.WHITE;
     private static final Color TEXT_COLOR = new Color(44, 62, 80);
     private static final Color HOVER_COLOR = new Color(52, 152, 219);
-
-    // ============================================================
-    // COMPONENTES DE LA INTERFAZ
-    // ============================================================
     private JPanel headerPanel;
     private JLabel lblTitulo;
     private JLabel lblSubtitulo;
     private JLabel lblFechaHora;
     private Timer relojTimer;
 
-    // ============================================================
-    // CONSTRUCTOR
-    // ============================================================
     public VentanaPrincipal() {
         configurarVentana();
         inicializarComponentes();
@@ -55,7 +41,7 @@ public class VentanaPrincipal extends JFrame {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
             System.err.println("Error configurando Look and Feel: " + e.getMessage());
         }
 
@@ -315,11 +301,10 @@ public class VentanaPrincipal extends JFrame {
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
             }
         }
 

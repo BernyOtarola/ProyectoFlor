@@ -6,7 +6,6 @@ import java.time.format.DateTimeParseException;
 public class ValidacionUtil {
 
     /**
-     * Verifica si un String está vacío o es null
      * @param s
      * @return 
      */
@@ -15,7 +14,6 @@ public class ValidacionUtil {
     }
 
     /**
-     * Verifica si un String es un número válido
      * @param s
      * @return 
      */
@@ -31,7 +29,6 @@ public class ValidacionUtil {
     }
 
     /**
-     * Verifica si un String es un entero válido
      * @param s
      * @return 
      */

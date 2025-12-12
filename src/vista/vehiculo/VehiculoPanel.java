@@ -1,52 +1,130 @@
 package vista.vehiculo;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.RowFilter;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import modelo.Vehiculo;
 
-/**
- * Panel principal del módulo de Vehículos
- * Gestiona la visualización y acciones sobre los vehículos
- */
 public class VehiculoPanel extends javax.swing.JPanel {
 
-    /**
-     * Constructor - Inicializa el panel y el controlador
-     */
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color HOVER_COLOR = new Color(52, 152, 219);
+
     public VehiculoPanel() {
         initComponents();
+        aplicarEstiloModerno();
         configurarTabla();
-        // ⭐ INICIALIZAR EL CONTROLADOR
         new controlador.VehiculoController(this);
     }
 
-    /**
-     * Configuración inicial de la tabla de vehículos
-     */
+    private void aplicarEstiloModerno() {
+        // Estilo del panel principal
+        setBackground(BACKGROUND_COLOR);
+        setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        // Estilizar botones
+        estilizarBoton(btnNuevo, ACCENT_COLOR, "Nuevo Vehículo");
+        estilizarBoton(btnEditar, PRIMARY_COLOR, "Editar");
+        estilizarBoton(btnEliminar, new Color(231, 76, 60), "Eliminar");
+        estilizarBoton(btnBuscar, SECONDARY_COLOR, "Buscar");
+
+        // Estilizar campo de búsqueda
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+
+        // Estilizar label
+        jLabel1.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        jLabel1.setForeground(TEXT_COLOR);
+
+        // Estilizar tabla
+        estilizarTabla();
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+
+        // Efecto hover
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
+    private void estilizarTabla() {
+        // Estilo del contenido de la tabla
+        tblVehiculos.setBackground(CARD_COLOR);
+        tblVehiculos.setForeground(TEXT_COLOR);
+        tblVehiculos.setGridColor(new Color(224, 224, 224));
+        tblVehiculos.setRowHeight(35);
+        tblVehiculos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tblVehiculos.setSelectionBackground(HOVER_COLOR);
+        tblVehiculos.setSelectionForeground(Color.WHITE);
+        tblVehiculos.setShowVerticalLines(false);
+        tblVehiculos.setIntercellSpacing(new Dimension(0, 1));
+
+        // Estilo del header
+        JTableHeader header = tblVehiculos.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        // Estilo del scroll pane
+        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.getViewport().setBackground(CARD_COLOR);
+    }
+
     private void configurarTabla() {
-        tblVehiculos.setRowHeight(24);
+        tblVehiculos.setRowHeight(35);
         tblVehiculos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblVehiculos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        // ✅ AHORA CON 7 COLUMNAS (INCLUYE ESTADO)
-        tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
-        tblVehiculos.getColumnModel().getColumn(1).setPreferredWidth(120);  // Placa
-        tblVehiculos.getColumnModel().getColumn(2).setPreferredWidth(150);  // Marca
-        tblVehiculos.getColumnModel().getColumn(3).setPreferredWidth(150);  // Modelo
-        tblVehiculos.getColumnModel().getColumn(4).setPreferredWidth(80);   // Año
-        tblVehiculos.getColumnModel().getColumn(5).setPreferredWidth(120);  // Precio/Día
-        tblVehiculos.getColumnModel().getColumn(6).setPreferredWidth(120);  // Estado ⭐ AGREGADO
+        tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(60);  
+        tblVehiculos.getColumnModel().getColumn(1).setPreferredWidth(120);  
+        tblVehiculos.getColumnModel().getColumn(2).setPreferredWidth(150);  
+        tblVehiculos.getColumnModel().getColumn(3).setPreferredWidth(150);  
+        tblVehiculos.getColumnModel().getColumn(4).setPreferredWidth(80);   
+        tblVehiculos.getColumnModel().getColumn(5).setPreferredWidth(120);  
+        tblVehiculos.getColumnModel().getColumn(6).setPreferredWidth(120);  
     }
 
-    /**
-     * Carga lista de vehículos en la tabla
-     * @param lista Lista de vehículos a mostrar
-     */
     public void cargarTabla(List<Vehiculo> lista) {
         DefaultTableModel modelo = (DefaultTableModel) tblVehiculos.getModel();
-        modelo.setRowCount(0); // Limpiar tabla
+        modelo.setRowCount(0);
 
         for (Vehiculo v : lista) {
             modelo.addRow(new Object[]{
@@ -56,23 +134,15 @@ public class VehiculoPanel extends javax.swing.JPanel {
                 v.getModelo(),
                 v.getAnio(),
                 String.format("₡%.2f", v.getPrecioDia()),
-                v.getEstado() // ⭐ COLUMNA ESTADO AGREGADA
+                v.getEstado()
             });
         }
     }
 
-    /**
-     * Actualiza la tabla con nueva información
-     * @param lista Lista de vehículos actualizada
-     */
     public void actualizarTabla(List<Vehiculo> lista) {
         cargarTabla(lista);
     }
 
-    /**
-     * Obtiene el vehículo seleccionado de la tabla
-     * @return Vehículo seleccionado o null si no hay selección
-     */
     public Vehiculo getVehiculoSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();
         if (fila == -1) {
@@ -85,38 +155,28 @@ public class VehiculoPanel extends javax.swing.JPanel {
         v.setMarca(tblVehiculos.getValueAt(fila, 2).toString());
         v.setModelo(tblVehiculos.getValueAt(fila, 3).toString());
         v.setAnio(Integer.parseInt(tblVehiculos.getValueAt(fila, 4).toString()));
-        
-        // Limpiar formato de precio
+
         String precioStr = tblVehiculos.getValueAt(fila, 5).toString()
-            .replace("₡", "").replace(",", "").trim();
+                .replace("₡", "").replace(",", "").trim();
         v.setPrecioDia(Double.parseDouble(precioStr));
-        
-        v.setEstado(tblVehiculos.getValueAt(fila, 6).toString()); // ⭐ ESTADO AGREGADO
+
+        v.setEstado(tblVehiculos.getValueAt(fila, 6).toString());
 
         return v;
     }
 
-    /**
-     * Filtra la tabla por texto de búsqueda
-     * @param texto Texto para filtrar (case-insensitive)
-     */
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblVehiculos.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         tblVehiculos.setRowSorter(sorter);
 
         if (texto.trim().isEmpty()) {
-            sorter.setRowFilter(null); // Mostrar todo
+            sorter.setRowFilter(null);
         } else {
-            // Filtro case-insensitive
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+            sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + texto));
         }
     }
 
-    /**
-     * Obtiene el ID del vehículo seleccionado
-     * @return ID del vehículo o -1 si no hay selección
-     */
     public int getIdSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();
         if (fila == -1) {
@@ -125,13 +185,10 @@ public class VehiculoPanel extends javax.swing.JPanel {
         return Integer.parseInt(tblVehiculos.getValueAt(fila, 0).toString());
     }
 
-    /**
-     * Limpia el campo de búsqueda
-     */
     public void limpiarBusqueda() {
         txtBuscar.setText("");
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
