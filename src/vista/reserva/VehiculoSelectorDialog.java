@@ -46,7 +46,7 @@ public class VehiculoSelectorDialog extends JDialog {
         
         JScrollPane scroll = new JScrollPane(tblVehiculos);
         add(scroll, BorderLayout.CENTER);
-
+        
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnSeleccionar = new JButton("✅ Seleccionar");
         btnCancelar = new JButton("🚫 Cancelar");

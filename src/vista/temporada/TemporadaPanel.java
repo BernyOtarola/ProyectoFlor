@@ -1,42 +1,133 @@
 package vista.temporada;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.util.List;
-
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.JTableHeader;
 
 public class TemporadaPanel extends javax.swing.JPanel {
 
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color HOVER_COLOR = new Color(52, 152, 219);
+
     public TemporadaPanel() {
         initComponents();
+        aplicarEstiloModerno();
         configurarTabla();
-
         new controlador.TemporadaController(this);
     }
 
+    private void aplicarEstiloModerno() {
+        // Estilo del panel principal
+        setBackground(BACKGROUND_COLOR);
+        setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        // Estilizar botones con colores apropiados
+        estilizarBoton(btnNuevo, ACCENT_COLOR, "Nueva Temporada");
+        estilizarBoton(btnEditar, PRIMARY_COLOR, "Editar");
+        estilizarBoton(btnEliminar, new Color(231, 76, 60), "Eliminar");
+        estilizarBoton(btnBuscar, SECONDARY_COLOR, "Buscar");
+
+        // Estilizar campo de búsqueda
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+
+        // Estilizar label
+        jLabel1.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        jLabel1.setForeground(TEXT_COLOR);
+
+        // Estilizar tabla
+        estilizarTabla();
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+
+        // Efecto hover
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
+    private void estilizarTabla() {
+        // Estilo del contenido de la tabla
+        tblTemporadas.setBackground(CARD_COLOR);
+        tblTemporadas.setForeground(TEXT_COLOR);
+        tblTemporadas.setGridColor(new Color(224, 224, 224));
+        tblTemporadas.setRowHeight(35);
+        tblTemporadas.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tblTemporadas.setSelectionBackground(HOVER_COLOR);
+        tblTemporadas.setSelectionForeground(Color.WHITE);
+        tblTemporadas.setShowVerticalLines(false);
+        tblTemporadas.setIntercellSpacing(new Dimension(0, 1));
+
+        // Estilo del header
+        JTableHeader header = tblTemporadas.getTableHeader();
+        header.setBackground(SECONDARY_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setPreferredSize(new Dimension(header.getWidth(), 45));
+        header.setBorder(BorderFactory.createEmptyBorder());
+
+        // Estilo del scroll pane
+        jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        jScrollPane1.getViewport().setBackground(CARD_COLOR);
+    }
+
     private void configurarTabla() {
-        tblTemporadas.setRowHeight(24);
+        tblTemporadas.setRowHeight(35);
         tblTemporadas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblTemporadas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
-        // Ajustar anchos de columna para óptima visualización
-        tblTemporadas.getColumnModel().getColumn(0).setPreferredWidth(60);  // ID
-        tblTemporadas.getColumnModel().getColumn(1).setPreferredWidth(250); // Nombre
-        tblTemporadas.getColumnModel().getColumn(2).setPreferredWidth(120); // Fecha Inicio
-        tblTemporadas.getColumnModel().getColumn(3).setPreferredWidth(120); // Fecha Fin
-        tblTemporadas.getColumnModel().getColumn(4).setPreferredWidth(100); // Recargo
+        // Ajustar anchos de columna
+        tblTemporadas.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
+        tblTemporadas.getColumnModel().getColumn(1).setPreferredWidth(280);  // Nombre
+        tblTemporadas.getColumnModel().getColumn(2).setPreferredWidth(140);  // Fecha Inicio
+        tblTemporadas.getColumnModel().getColumn(3).setPreferredWidth(140);  // Fecha Fin
+        tblTemporadas.getColumnModel().getColumn(4).setPreferredWidth(120);  // Recargo
     }
 
     /**
-     * @param lista Lista de temporadas a mostrar
+     * @param lista
      */
     public void cargarTabla(List<modelo.Temporada> lista) {
         DefaultTableModel modelo = (DefaultTableModel) tblTemporadas.getModel();
-        modelo.setRowCount(0); // Limpiar tabla
+        modelo.setRowCount(0);
 
         for (modelo.Temporada t : lista) {
-
             double recargo = (t.getFactor() - 1.0) * 100;
 
             modelo.addRow(new Object[]{
@@ -50,14 +141,14 @@ public class TemporadaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * @param lista Lista de temporadas
+     * @param lista
      */
     public void actualizarTabla(List<modelo.Temporada> lista) {
         cargarTabla(lista);
     }
 
     /**
-     * @return Temporada seleccionada o null si no hay selección
+     * @return
      */
     public modelo.Temporada getTemporadaSeleccionada() {
         int fila = tblTemporadas.getSelectedRow();
@@ -66,25 +157,21 @@ public class TemporadaPanel extends javax.swing.JPanel {
         }
 
         modelo.Temporada t = new modelo.Temporada();
-
-        // Obtener datos de la fila seleccionada
         t.setIdTemporada(Integer.parseInt(tblTemporadas.getValueAt(fila, 0).toString()));
         t.setNombre(tblTemporadas.getValueAt(fila, 1).toString());
         t.setFechaInicio(tblTemporadas.getValueAt(fila, 2).toString());
         t.setFechaFin(tblTemporadas.getValueAt(fila, 3).toString());
 
-        // Parsear el recargo (remover el símbolo % y convertir)
+        // Parsear el recargo
         String recargoStr = tblTemporadas.getValueAt(fila, 4).toString().replace("%", "").trim();
         double recargo = Double.parseDouble(recargoStr);
-
-        // Establecer el recargo (internamente calcula el factor)
         t.setRecargo(recargo);
 
         return t;
     }
 
     /**
-     * @param texto Texto para filtrar
+     * @param texto
      */
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblTemporadas.getModel();
@@ -92,15 +179,14 @@ public class TemporadaPanel extends javax.swing.JPanel {
         tblTemporadas.setRowSorter(sorter);
 
         if (texto.trim().isEmpty()) {
-            sorter.setRowFilter(null); // Mostrar todo
+            sorter.setRowFilter(null);
         } else {
-            // Filtro case-insensitive
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
         }
     }
 
     /**
-     * @return ID de temporada o -1 si no hay selección
+     * @return 
      */
     public int getIdSeleccionado() {
         int fila = tblTemporadas.getSelectedRow();

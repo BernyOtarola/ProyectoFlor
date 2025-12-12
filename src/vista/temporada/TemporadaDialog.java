@@ -1,39 +1,150 @@
 package vista.temporada;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-/**
- * Diálogo para crear/editar temporadas Permite gestionar periodos con recargos
- * especiales (Navidad, Semana Santa, etc.)
- */
 public class TemporadaDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger
             = java.util.logging.Logger.getLogger(TemporadaDialog.class.getName());
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color DANGER_COLOR = new Color(231, 76, 60);
 
     /**
-     * Constructor del diálogo
-     *
      * @param parent Frame padre
      * @param modal true para modal, false para no modal
      */
     public TemporadaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        aplicarEstiloModerno();
         setLocationRelativeTo(null);
-        setTitle("Temporada - Gestión de Recargos");
-
-        // Campo ID no editable (autoincremental)
+        setTitle("Gestión de Temporada");
         txtId.setEditable(false);
-
-        // Configurar sincronización entre Recargo y Factor
         configurarSincronizacion();
     }
 
+    private void aplicarEstiloModerno() {
+        // Estilo del diálogo
+        getContentPane().setBackground(BACKGROUND_COLOR);
+
+        // Agregar header
+        agregarHeader();
+
+        // Estilizar labels
+        estilizarLabel(jLabel1);
+        estilizarLabel(jLabel2);
+        estilizarLabel(jLabel3);
+        estilizarLabel(jLabel4);
+        estilizarLabel(jLabel5);
+        estilizarLabel(jLabel6);
+
+        // Estilizar campos de texto
+        estilizarCampoTexto(txtId);
+        estilizarCampoTexto(txtNombre);
+        estilizarCampoTexto(txtFechaInicio);
+        estilizarCampoTexto(txtFechaFin);
+        estilizarCampoTexto(txtRecargo);
+        estilizarCampoTexto(txtFactor);
+
+        // Estilizar botones
+        estilizarBoton(btnGuardar, ACCENT_COLOR, "Guardar");
+        estilizarBoton(btnCancelar, DANGER_COLOR, "Cancelar");
+    }
+
+    private void agregarHeader() {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
+        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
+
+        JLabel lblTitulo = new JLabel("INFORMACIÓN DE TEMPORADA");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitulo.setForeground(Color.WHITE);
+        headerPanel.add(lblTitulo);
+
+        getContentPane().add(headerPanel, BorderLayout.NORTH);
+    }
+
     /**
-     * Configura la sincronización automática entre % Recargo y Factor Recargo:
-     * Porcentaje visual (ej: 30%) Factor: Multiplicador matemático (ej: 1.30)
+     * Estiliza un label
      */
+    private void estilizarLabel(JLabel label) {
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setForeground(TEXT_COLOR);
+    }
+
+    /**
+     * Estiliza un campo de texto
+     */
+    private void estilizarCampoTexto(JTextField campo) {
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        campo.setPreferredSize(new Dimension(campo.getWidth(), 35));
+
+        campo.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+        });
+    }
+
+    /**
+     * Estiliza un botón
+     */
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(140, 40));
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
     private void configurarSincronizacion() {
         // Cuando cambia el Recargo (%), actualizar Factor
         txtRecargo.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -70,9 +181,6 @@ public class TemporadaDialog extends javax.swing.JDialog {
         });
     }
 
-    /**
-     * Limpia todos los campos del formulario
-     */
     public void limpiarFormulario() {
         txtId.setText("");
         txtNombre.setText("");
@@ -83,9 +191,7 @@ public class TemporadaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Carga los datos de una temporada en el formulario
-     *
-     * @param t Temporada a cargar
+     * @param t
      */
     public void cargarTemporada(modelo.Temporada t) {
         txtId.setText(String.valueOf(t.getIdTemporada()));
@@ -100,10 +206,7 @@ public class TemporadaDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Obtiene la temporada desde el formulario con validaciones básicas Las
-     * validaciones exhaustivas se hacen en el controlador
-     *
-     * @return Temporada con los datos del formulario o null si hay error
+     * @return 
      */
     public modelo.Temporada obtenerTemporada() {
         // Validaciones básicas
@@ -124,7 +227,6 @@ public class TemporadaDialog extends javax.swing.JDialog {
         // Crear temporada
         modelo.Temporada t = new modelo.Temporada();
 
-        // ID solo si se está editando
         if (!txtId.getText().trim().isEmpty()) {
             t.setIdTemporada(Integer.parseInt(txtId.getText()));
         }
@@ -132,8 +234,6 @@ public class TemporadaDialog extends javax.swing.JDialog {
         t.setNombre(txtNombre.getText().trim());
         t.setFechaInicio(txtFechaInicio.getText().trim());
         t.setFechaFin(txtFechaFin.getText().trim());
-
-        // Usar el factor directamente
         t.setFactor(Double.parseDouble(txtFactor.getText().trim()));
 
         return t;
