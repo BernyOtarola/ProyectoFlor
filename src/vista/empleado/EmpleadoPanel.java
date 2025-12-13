@@ -8,11 +8,12 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import modelo.Empleado;
 import java.awt.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class EmpleadoPanel extends javax.swing.JPanel {
 
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -74,7 +75,8 @@ public class EmpleadoPanel extends javax.swing.JPanel {
     }
 
     private void estilizarTabla() {
-        
+
+        // Estilo del contenido de la tabla
         tblEmpleados.setBackground(CARD_COLOR);
         tblEmpleados.setForeground(TEXT_COLOR);
         tblEmpleados.setGridColor(new Color(224, 224, 224));
@@ -85,16 +87,30 @@ public class EmpleadoPanel extends javax.swing.JPanel {
         tblEmpleados.setShowVerticalLines(false);
         tblEmpleados.setIntercellSpacing(new Dimension(0, 1));
 
+        // ⭐ SOLUCIÓN: Renderer personalizado para el header
         JTableHeader header = tblEmpleados.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel(value != null ? value.toString() : "");
+                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                label.setForeground(Color.WHITE);
+                label.setBackground(SECONDARY_COLOR);
+                label.setOpaque(true);
+                label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                return label;
+            }
+        });
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setReorderingAllowed(false);
 
+        // Estilo del scroll pane
         jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
         jScrollPane1.getViewport().setBackground(CARD_COLOR);
     }
+
 
     private void configurarTabla() {
         tblEmpleados.setRowHeight(35);
@@ -214,10 +230,10 @@ public class EmpleadoPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscar)
-                    .addComponent(btnNuevo)
-                    .addComponent(btnEditar)
-                    .addComponent(btnEliminar))
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(58, 58, 58)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE))
         );

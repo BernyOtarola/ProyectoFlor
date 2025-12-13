@@ -10,7 +10,7 @@ import java.util.List;
 public class VehiculoSelectorDialog extends JDialog {
 
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -61,7 +61,7 @@ public class VehiculoSelectorDialog extends JDialog {
         headerPanel.setPreferredSize(new Dimension(getWidth(), 70));
         headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 25, 20));
 
-        JLabel lblTitulo = new JLabel("🚗 SELECCIONAR VEHÍCULO");
+        JLabel lblTitulo = new JLabel("SELECCIONAR VEHÍCULO");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
         lblTitulo.setForeground(Color.WHITE);
         headerPanel.add(lblTitulo);
@@ -114,13 +114,24 @@ public class VehiculoSelectorDialog extends JDialog {
         tblVehiculos.setShowHorizontalLines(true);
         tblVehiculos.setIntercellSpacing(new Dimension(1, 1));
 
-        // Header styling
+        // ⭐ SOLUCIÓN: Renderer personalizado para el header
         JTableHeader header = tblVehiculos.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel(value != null ? value.toString() : "");
+                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                label.setForeground(Color.WHITE);
+                label.setBackground(SECONDARY_COLOR);
+                label.setOpaque(true);
+                label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                return label;
+            }
+        });
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setReorderingAllowed(false);
 
         // Ajustar anchos de columna
         tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(50);   // ID
@@ -227,7 +238,9 @@ public class VehiculoSelectorDialog extends JDialog {
 
     public Vehiculo getVehiculoSeleccionado() {
         int fila = tblVehiculos.getSelectedRow();
-        if (fila == -1) return null;
+        if (fila == -1) {
+            return null;
+        }
 
         Vehiculo v = new Vehiculo();
         v.setIdVehiculo((int) tblVehiculos.getValueAt(fila, 0));
@@ -238,7 +251,7 @@ public class VehiculoSelectorDialog extends JDialog {
 
         // Limpiar el formato de precio
         String precioStr = tblVehiculos.getValueAt(fila, 5).toString()
-            .replace("₡", "").replace(",", "").trim();
+                .replace("₡", "").replace(",", "").trim();
         v.setPrecioDia(Double.parseDouble(precioStr));
 
         v.setEstado(tblVehiculos.getValueAt(fila, 6).toString());

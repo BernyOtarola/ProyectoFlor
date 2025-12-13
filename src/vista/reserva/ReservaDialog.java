@@ -2,6 +2,7 @@ package vista.reserva;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import modelo.DetalleReserva;
@@ -27,8 +29,8 @@ public class ReservaDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaDialog.class.getName());
 
-   private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -182,35 +184,46 @@ public class ReservaDialog extends javax.swing.JDialog {
     }
 
     private void estilizarTabla() {
-        tblDetalle.setBackground(CARD_COLOR);
-        tblDetalle.setForeground(TEXT_COLOR);
-        tblDetalle.setGridColor(new Color(224, 224, 224));
-        tblDetalle.setRowHeight(35);
-        tblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        tblDetalle.setSelectionBackground(HOVER_COLOR);
-        tblDetalle.setSelectionForeground(Color.WHITE);
-        tblDetalle.setShowVerticalLines(true);
-        tblDetalle.setShowHorizontalLines(true);
-        tblDetalle.setIntercellSpacing(new Dimension(1, 1));
+        
+    // Estilo del contenido de la tabla
+    tblDetalle.setBackground(CARD_COLOR);
+    tblDetalle.setForeground(TEXT_COLOR);
+    tblDetalle.setGridColor(new Color(224, 224, 224));
+    tblDetalle.setRowHeight(35);
+    tblDetalle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+    tblDetalle.setSelectionBackground(HOVER_COLOR);
+    tblDetalle.setSelectionForeground(Color.WHITE);
+    tblDetalle.setShowVerticalLines(false);
+    tblDetalle.setIntercellSpacing(new Dimension(0, 1));
 
-        JTableHeader header = tblDetalle.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+    // ⭐ SOLUCIÓN: Renderer personalizado para el header
+    JTableHeader header = tblDetalle.getTableHeader();
+    header.setDefaultRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = new JLabel(value != null ? value.toString() : "");
+            label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            label.setForeground(Color.WHITE);
+            label.setBackground(SECONDARY_COLOR);
+            label.setOpaque(true);
+            label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            label.setHorizontalAlignment(JLabel.CENTER);
+            return label;
+        }
+    });
+    header.setPreferredSize(new Dimension(header.getWidth(), 45));
+    header.setReorderingAllowed(false);
 
-        jScrollPane1.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220), 2),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
-        jScrollPane1.getViewport().setBackground(CARD_COLOR);
-    }
+    // Estilo del scroll pane
+    jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+    jScrollPane1.getViewport().setBackground(CARD_COLOR);
+}
 
     private void configurarTablaDetalle() {
         tblDetalle.setRowHeight(35);
         tblDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblDetalle.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(100);
         tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);

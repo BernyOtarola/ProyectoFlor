@@ -64,10 +64,10 @@
               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnBuscar" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnNuevaReserva" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnVerDetalle" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnEliminarReserva" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnBuscar" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="btnNuevaReserva" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="btnVerDetalle" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="btnEliminarReserva" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="txtBuscar" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -76,7 +76,7 @@
                   <Component id="txtFechaInicio" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtFechaFin" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="btnFiltrarFechas" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnFiltrarFechas" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="519" max="-2" attributes="0"/>

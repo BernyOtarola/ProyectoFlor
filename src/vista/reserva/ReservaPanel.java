@@ -2,6 +2,7 @@ package vista.reserva;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -20,6 +21,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
@@ -29,7 +31,7 @@ import modelo.Reserva;
 public class ReservaPanel extends javax.swing.JPanel {
 
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -125,6 +127,8 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     private void estilizarTabla() {
+
+        // Estilo del contenido de la tabla
         tblReservas.setBackground(CARD_COLOR);
         tblReservas.setForeground(TEXT_COLOR);
         tblReservas.setGridColor(new Color(224, 224, 224));
@@ -135,14 +139,26 @@ public class ReservaPanel extends javax.swing.JPanel {
         tblReservas.setShowVerticalLines(false);
         tblReservas.setIntercellSpacing(new Dimension(0, 1));
 
-        // Header oscuro
+        // ⭐ SOLUCIÓN: Renderer personalizado para el header
         JTableHeader header = tblReservas.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel(value != null ? value.toString() : "");
+                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                label.setForeground(Color.WHITE);
+                label.setBackground(SECONDARY_COLOR);
+                label.setOpaque(true);
+                label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                return label;
+            }
+        });
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setReorderingAllowed(false);
 
+        // Estilo del scroll pane
         jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
         jScrollPane1.getViewport().setBackground(CARD_COLOR);
     }
@@ -239,18 +255,30 @@ public class ReservaPanel extends javax.swing.JPanel {
         tblDetalle.setShowHorizontalLines(true);
         tblDetalle.setIntercellSpacing(new Dimension(1, 1));
 
+        // ⭐ SOLUCIÓN: Renderer personalizado para el header
         JTableHeader header = tblDetalle.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel(value != null ? value.toString() : "");
+                label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                label.setForeground(Color.WHITE);
+                label.setBackground(SECONDARY_COLOR);
+                label.setOpaque(true);
+                label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                return label;
+            }
+        });
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setReorderingAllowed(false);
 
-        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(100);  
-        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);  
-        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(150);  
-        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);   
-        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(150);  
+        tblDetalle.getColumnModel().getColumn(0).setPreferredWidth(100);
+        tblDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);
+        tblDetalle.getColumnModel().getColumn(2).setPreferredWidth(150);
+        tblDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
+        tblDetalle.getColumnModel().getColumn(4).setPreferredWidth(150);
 
         JScrollPane scroll = new JScrollPane(tblDetalle);
         scroll.setBorder(BorderFactory.createCompoundBorder(
@@ -267,12 +295,10 @@ public class ReservaPanel extends javax.swing.JPanel {
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
 
-        // Label "Total de la Reserva:"
         JLabel lblTextoTotal = new JLabel("TOTAL DE LA RESERVA: ");
         lblTextoTotal.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblTextoTotal.setForeground(TEXT_COLOR);
 
-        // Label con el valor del total
         JLabel lblTotal = new JLabel(String.format("₡%.2f", totalGeneral));
         lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 20));
         lblTotal.setForeground(ACCENT_COLOR);
@@ -320,7 +346,7 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * @return 
+     * @return
      */
     public int getReservaSeleccionada() {
         int fila = tblReservas.getSelectedRow();
@@ -332,7 +358,7 @@ public class ReservaPanel extends javax.swing.JPanel {
     }
 
     /**
-     * @param texto 
+     * @param texto
      */
     public void filtrar(String texto) {
         DefaultTableModel modelo = (DefaultTableModel) tblReservas.getModel();
@@ -471,10 +497,10 @@ public class ReservaPanel extends javax.swing.JPanel {
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(btnBuscar)
-                    .addComponent(btnNuevaReserva)
-                    .addComponent(btnVerDetalle)
-                    .addComponent(btnEliminarReserva)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevaReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVerDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminarReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -482,7 +508,7 @@ public class ReservaPanel extends javax.swing.JPanel {
                     .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(txtFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFiltrarFechas))
+                    .addComponent(btnFiltrarFechas, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(46, 46, 46)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE))
         );

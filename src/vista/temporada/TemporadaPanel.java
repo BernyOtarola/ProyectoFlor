@@ -1,6 +1,7 @@
 package vista.temporada;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,13 +11,16 @@ import javax.swing.table.TableRowSorter;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
 public class TemporadaPanel extends javax.swing.JPanel {
 
-     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -82,7 +86,8 @@ public class TemporadaPanel extends javax.swing.JPanel {
         });
     }
 
-    private void estilizarTabla() {
+     private void estilizarTabla() {
+
         // Estilo del contenido de la tabla
         tblTemporadas.setBackground(CARD_COLOR);
         tblTemporadas.setForeground(TEXT_COLOR);
@@ -94,13 +99,24 @@ public class TemporadaPanel extends javax.swing.JPanel {
         tblTemporadas.setShowVerticalLines(false);
         tblTemporadas.setIntercellSpacing(new Dimension(0, 1));
 
-        // Estilo del header
+        // ⭐ SOLUCIÓN: Renderer personalizado para el header
         JTableHeader header = tblTemporadas.getTableHeader();
-        header.setBackground(SECONDARY_COLOR);
-        header.setForeground(Color.WHITE);
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = new JLabel(value != null ? value.toString() : "");
+                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                label.setForeground(Color.WHITE);
+                label.setBackground(SECONDARY_COLOR);
+                label.setOpaque(true);
+                label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                return label;
+            }
+        });
         header.setPreferredSize(new Dimension(header.getWidth(), 45));
-        header.setBorder(BorderFactory.createEmptyBorder());
+        header.setReorderingAllowed(false);
 
         // Estilo del scroll pane
         jScrollPane1.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
@@ -266,11 +282,11 @@ public class TemporadaPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscar)
-                    .addComponent(btnNuevo)
-                    .addComponent(btnEditar)
-                    .addComponent(btnEliminar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
