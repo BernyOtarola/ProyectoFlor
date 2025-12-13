@@ -44,12 +44,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="txtFechaInicio" min="-2" pref="94" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="txtFechaInicio" min="-2" pref="120" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtFechaFin" min="-2" pref="96" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="txtFechaFin" min="-2" pref="120" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnFiltrarFechas" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -64,21 +64,21 @@
               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtBuscar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnBuscar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnNuevaReserva" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnVerDetalle" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnEliminarReserva" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtBuscar" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtFechaInicio" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtFechaInicio" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtFechaFin" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtFechaFin" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="btnFiltrarFechas" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" pref="58" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="519" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -217,7 +217,7 @@
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="txtFechaInicio">
       <Properties>
-        <Property name="text" type="java.lang.String" value="yyyy-MM-dd"/>
+        <Property name="text" type="java.lang.String" value="    YYYY-MM-DD"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[94, 22]"/>
         </Property>
@@ -239,7 +239,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="txtFechaFin">
       <Properties>
-        <Property name="text" type="java.lang.String" value="yyyy-MM-dd"/>
+        <Property name="text" type="java.lang.String" value="    YYYY-MM-DD"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[94, 22]"/>
         </Property>

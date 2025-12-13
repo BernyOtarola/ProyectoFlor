@@ -15,7 +15,7 @@ import javax.swing.table.JTableHeader;
 
 public class TemporadaPanel extends javax.swing.JPanel {
 
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
@@ -111,12 +111,10 @@ public class TemporadaPanel extends javax.swing.JPanel {
         tblTemporadas.setRowHeight(35);
         tblTemporadas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblTemporadas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-
-        // Ajustar anchos de columna
         tblTemporadas.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
-        tblTemporadas.getColumnModel().getColumn(1).setPreferredWidth(280);  // Nombre
-        tblTemporadas.getColumnModel().getColumn(2).setPreferredWidth(140);  // Fecha Inicio
-        tblTemporadas.getColumnModel().getColumn(3).setPreferredWidth(140);  // Fecha Fin
+        tblTemporadas.getColumnModel().getColumn(1).setPreferredWidth(350);  // Nombre (más ancho)
+        tblTemporadas.getColumnModel().getColumn(2).setPreferredWidth(150);  // Fecha Inicio
+        tblTemporadas.getColumnModel().getColumn(3).setPreferredWidth(150);  // Fecha Fin
         tblTemporadas.getColumnModel().getColumn(4).setPreferredWidth(120);  // Recargo
     }
 
@@ -258,11 +256,8 @@ public class TemporadaPanel extends javax.swing.JPanel {
                 .addComponent(btnEditar)
                 .addGap(50, 50, 50)
                 .addComponent(btnEliminar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(100, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,14 +265,13 @@ public class TemporadaPanel extends javax.swing.JPanel {
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscar)
                     .addComponent(btnNuevo)
                     .addComponent(btnEditar)
                     .addComponent(btnEliminar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
