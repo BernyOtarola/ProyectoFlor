@@ -150,7 +150,7 @@ public class ReservaPanel extends javax.swing.JPanel {
     private void configurarTabla() {
         tblReservas.setRowHeight(24);
         tblReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblReservas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblReservas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         tblReservas.getColumnModel().getColumn(0).setPreferredWidth(50);
         tblReservas.getColumnModel().getColumn(1).setPreferredWidth(220);

@@ -99,7 +99,7 @@ public class EmpleadoPanel extends javax.swing.JPanel {
     private void configurarTabla() {
         tblEmpleados.setRowHeight(35);
         tblEmpleados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblEmpleados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblEmpleados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         tblEmpleados.getColumnModel().getColumn(0).setPreferredWidth(60);  
         tblEmpleados.getColumnModel().getColumn(1).setPreferredWidth(240); 

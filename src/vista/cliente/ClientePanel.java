@@ -16,7 +16,7 @@ import modelo.Cliente;
 public class ClientePanel extends javax.swing.JPanel {
 
     private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94);
+    private static final Color SECONDARY_COLOR = new Color(30, 39, 46);
     private static final Color ACCENT_COLOR = new Color(46, 204, 113);
     private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
     private static final Color CARD_COLOR = Color.WHITE;
@@ -104,7 +104,7 @@ public class ClientePanel extends javax.swing.JPanel {
     private void configurarTabla() {
         tblClientes.setRowHeight(35);
         tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblClientes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblClientes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(60);
         tblClientes.getColumnModel().getColumn(1).setPreferredWidth(220);

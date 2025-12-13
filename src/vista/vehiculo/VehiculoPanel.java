@@ -111,7 +111,7 @@ public class VehiculoPanel extends javax.swing.JPanel {
     private void configurarTabla() {
         tblVehiculos.setRowHeight(35);
         tblVehiculos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblVehiculos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblVehiculos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         tblVehiculos.getColumnModel().getColumn(0).setPreferredWidth(60);  
         tblVehiculos.getColumnModel().getColumn(1).setPreferredWidth(120);  

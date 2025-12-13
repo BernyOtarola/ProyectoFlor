@@ -110,7 +110,7 @@ public class TemporadaPanel extends javax.swing.JPanel {
     private void configurarTabla() {
         tblTemporadas.setRowHeight(35);
         tblTemporadas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblTemporadas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblTemporadas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tblTemporadas.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
         tblTemporadas.getColumnModel().getColumn(1).setPreferredWidth(350);  // Nombre (más ancho)
         tblTemporadas.getColumnModel().getColumn(2).setPreferredWidth(150);  // Fecha Inicio
