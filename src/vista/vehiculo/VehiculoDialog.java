@@ -1,39 +1,165 @@
 package vista.vehiculo;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import modelo.Vehiculo;
 
-/**
- * Diálogo para crear/editar vehículos Incluye validaciones completas de todos
- * los campos
- */
 public class VehiculoDialog extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger
             = java.util.logging.Logger.getLogger(VehiculoDialog.class.getName());
 
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113);
+    private static final Color BACKGROUND_COLOR = new Color(236, 240, 241);
+    private static final Color TEXT_COLOR = new Color(44, 62, 80);
+    private static final Color DANGER_COLOR = new Color(231, 76, 60);
+
     /**
-     * Constructor del diálogo
-     *
      * @param parent Frame padre
      * @param modal true para modal, false para no modal
      */
     public VehiculoDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+     super(parent, modal);
         initComponents();
+        aplicarEstiloModerno();
         setLocationRelativeTo(null);
-        setTitle("Vehículo - Formulario");
+        setTitle("Gestión de Vehículo");
 
-        // Campo ID no editable (autoincremental)
         txtId.setEditable(false);
 
-        // Inicializar combo de estados
         inicializarComboEstado();
     }
 
-    /**
-     * Inicializa el combo de estados con los valores permitidos
-     */
+    private void aplicarEstiloModerno() {
+        // Estilo del diálogo
+        getContentPane().setBackground(BACKGROUND_COLOR);
+
+        // Agregar header moderno
+        agregarHeader();
+
+        // Estilizar labels
+        estilizarLabel(jLabel1);
+        estilizarLabel(jLabel2);
+        estilizarLabel(jLabel3);
+        estilizarLabel(jLabel4);
+        estilizarLabel(jLabel5);
+        estilizarLabel(jLabel6);
+        estilizarLabel(jLabel7);
+
+        // Estilizar campos de texto
+        estilizarCampoTexto(txtId);
+        estilizarCampoTexto(txtPlaca);
+        estilizarCampoTexto(txtMarca);
+        estilizarCampoTexto(txtModelo);
+        estilizarCampoTexto(txtAño);
+        estilizarCampoTexto(txtPrecioDia);
+
+        // Estilizar combo
+        estilizarCombo(cboEstado);
+
+        // Estilizar botones
+        estilizarBoton(btnGuardar, ACCENT_COLOR, "Guardar");
+        estilizarBoton(btnCancelar, DANGER_COLOR, "Cancelar");
+    }
+
+    private void agregarHeader() {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
+        headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
+
+        JLabel lblTitulo = new JLabel("🚗 INFORMACIÓN DEL VEHÍCULO");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitulo.setForeground(Color.WHITE);
+        headerPanel.add(lblTitulo);
+
+        getContentPane().add(headerPanel, BorderLayout.NORTH);
+    }
+
+
+    private void estilizarLabel(JLabel label) {
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setForeground(TEXT_COLOR);
+    }
+
+    private void estilizarCampoTexto(JTextField campo) {
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        campo.setPreferredSize(new Dimension(campo.getWidth(), 35));
+
+        // Efecto de foco
+        campo.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                campo.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                        BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                ));
+            }
+        });
+    }
+
+    private void estilizarCombo(JComboBox<String> combo) {
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        combo.setBackground(Color.WHITE);
+        combo.setForeground(TEXT_COLOR);
+        combo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        combo.setPreferredSize(new Dimension(combo.getPreferredSize().width, 35));
+        combo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    private void estilizarBoton(JButton btn, Color color, String texto) {
+        btn.setText(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(color);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(140, 40));
+
+        // Efecto hover
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(originalColor);
+            }
+        });
+    }
+
     private void inicializarComboEstado() {
         cboEstado.removeAllItems();
         cboEstado.addItem("Disponible");
@@ -42,9 +168,6 @@ public class VehiculoDialog extends javax.swing.JDialog {
         cboEstado.setSelectedIndex(0); // Por defecto: Disponible
     }
 
-    /**
-     * Limpia todos los campos del formulario
-     */
     public void limpiarFormulario() {
         txtId.setText("");
         txtPlaca.setText("");
@@ -56,8 +179,6 @@ public class VehiculoDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Carga los datos de un vehículo en el formulario
-     *
      * @param v Vehículo a cargar
      */
     public void cargarVehiculo(Vehiculo v) {
@@ -71,9 +192,6 @@ public class VehiculoDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Obtiene el vehículo desde el formulario con validaciones básicas Las
-     * validaciones exhaustivas se hacen en el controlador
-     *
      * @return Vehículo con los datos del formulario o null si hay error
      */
     public Vehiculo obtenerVehiculo() {
@@ -133,12 +251,7 @@ public class VehiculoDialog extends javax.swing.JDialog {
 
         return v;
     }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -164,8 +277,8 @@ public class VehiculoDialog extends javax.swing.JDialog {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(500, 450));
-        setPreferredSize(new java.awt.Dimension(500, 450));
+        setMinimumSize(new java.awt.Dimension(500, 600));
+        setPreferredSize(new java.awt.Dimension(500, 600));
 
         jLabel1.setText("ID:");
 

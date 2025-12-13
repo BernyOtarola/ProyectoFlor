@@ -34,6 +34,14 @@ public class ClienteController implements ActionListener {
         vista.btnEditar.addActionListener(this);
         vista.btnEliminar.addActionListener(this);
         vista.btnBuscar.addActionListener(this);
+        
+        vista.txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            String filtro = vista.txtBuscar.getText().trim();
+            buscar(filtro);
+        }
+    });
 
         // Cargar datos iniciales
         cargarTabla();

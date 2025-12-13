@@ -12,10 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * Controlador completo para el módulo de Reservas
- * Implementa gestión completa de reservas con detalles
- */
 public class ReservaController implements ActionListener {
 
     private ReservaPanel vista;
@@ -43,9 +39,9 @@ public class ReservaController implements ActionListener {
         vista.btnNuevaReserva.addActionListener(this);
         vista.btnVerDetalle.addActionListener(this);
         vista.btnEliminarReserva.addActionListener(this);
-        vista.btnBuscar.addActionListener(this);
+        vista.btnBuscar.addActionListener(this);      
         vista.btnFiltrarFechas.addActionListener(this);
-
+        
         // Cargar datos iniciales
         cargarReservas();
     }

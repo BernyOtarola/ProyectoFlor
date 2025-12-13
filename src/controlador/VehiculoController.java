@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controlador para el módulo de Vehículos
- * Implementa CRUD completo con validaciones
- * 
+ * Controlador para el módulo de Vehículos Implementa CRUD completo con
+ * validaciones
+ *
  * ⭐ VERSIÓN CORREGIDA - Búsqueda funcionando
  */
 public class VehiculoController implements ActionListener {
@@ -24,7 +24,6 @@ public class VehiculoController implements ActionListener {
     private VehiculoDAO dao;
 
     /**
-     * Constructor - Inicializa el controlador
      * @param vista Panel de vehículos
      */
     public VehiculoController(VehiculoPanel vista) {
@@ -35,7 +34,15 @@ public class VehiculoController implements ActionListener {
         vista.btnNuevo.addActionListener(this);
         vista.btnEditar.addActionListener(this);
         vista.btnEliminar.addActionListener(this);
-        vista.btnBuscar.addActionListener(this); // ⭐ CORREGIDO: Listener agregado
+        vista.btnBuscar.addActionListener(this);
+
+        vista.txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String filtro = vista.txtBuscar.getText().trim();
+                buscar(filtro);
+            }
+        });
 
         // Cargar datos iniciales
         cargarTabla();
@@ -51,6 +58,7 @@ public class VehiculoController implements ActionListener {
 
     /**
      * Abre el diálogo para crear/editar vehículo
+     *
      * @param v Vehículo a editar (null para nuevo)
      */
     private void abrirDialogo(Vehiculo v) {
@@ -93,6 +101,7 @@ public class VehiculoController implements ActionListener {
 
     /**
      * Guarda el vehículo con validaciones completas
+     *
      * @param dlg Diálogo con los datos
      * @return true si se guardó correctamente
      */
@@ -142,8 +151,8 @@ public class VehiculoController implements ActionListener {
         int añoActual = java.time.Year.now().getValue();
 
         if (año < 1900 || año > añoActual + 1) {
-            MensajeUtil.error(dlg, 
-                String.format("El año debe estar entre 1900 y %d.", añoActual + 1));
+            MensajeUtil.error(dlg,
+                    String.format("El año debe estar entre 1900 y %d.", añoActual + 1));
             dlg.txtAño.requestFocus();
             return false;
         }
@@ -206,6 +215,7 @@ public class VehiculoController implements ActionListener {
 
     /**
      * ⭐ CORREGIDO: Realiza búsqueda/filtrado en la tabla
+     *
      * @param filtro Texto a buscar
      */
     private void buscar(String filtro) {
@@ -220,14 +230,14 @@ public class VehiculoController implements ActionListener {
         String filtroLower = filtro.toLowerCase();
 
         List<Vehiculo> filtrados = lista.stream()
-            .filter(veh -> 
-                veh.getPlaca().toLowerCase().contains(filtroLower) ||
-                veh.getMarca().toLowerCase().contains(filtroLower) ||
-                veh.getModelo().toLowerCase().contains(filtroLower) ||
-                veh.getEstado().toLowerCase().contains(filtroLower) ||
-                String.valueOf(veh.getAnio()).contains(filtro)
-            )
-            .collect(Collectors.toList());
+                .filter(veh
+                        -> veh.getPlaca().toLowerCase().contains(filtroLower)
+                || veh.getMarca().toLowerCase().contains(filtroLower)
+                || veh.getModelo().toLowerCase().contains(filtroLower)
+                || veh.getEstado().toLowerCase().contains(filtroLower)
+                || String.valueOf(veh.getAnio()).contains(filtro)
+                )
+                .collect(Collectors.toList());
 
         vista.cargarTabla(filtrados);
 
@@ -251,19 +261,19 @@ public class VehiculoController implements ActionListener {
         // ===== BOTÓN EDITAR =====
         if (e.getSource() == vista.btnEditar) {
             Vehiculo v = vista.getVehiculoSeleccionado();
-            
+
             if (v == null) {
                 MensajeUtil.error(vista, "Debe seleccionar un vehículo de la tabla.");
                 return;
             }
-            
+
             abrirDialogo(v);
         }
 
         // ===== BOTÓN ELIMINAR =====
         if (e.getSource() == vista.btnEliminar) {
             Vehiculo v = vista.getVehiculoSeleccionado();
-            
+
             if (v == null) {
                 MensajeUtil.error(vista, "Debe seleccionar un vehículo de la tabla.");
                 return;
@@ -271,21 +281,21 @@ public class VehiculoController implements ActionListener {
 
             // Confirmar eliminación
             String mensaje = String.format(
-                "¿Está seguro de eliminar el vehículo?\n\n" +
-                "Placa: %s\nMarca: %s %s\nAño: %d",
-                v.getPlaca(), v.getMarca(), v.getModelo(), v.getAnio()
+                    "¿Está seguro de eliminar el vehículo?\n\n"
+                    + "Placa: %s\nMarca: %s %s\nAño: %d",
+                    v.getPlaca(), v.getMarca(), v.getModelo(), v.getAnio()
             );
 
             if (MensajeUtil.confirmar(vista, mensaje)) {
                 boolean exito = dao.eliminarVehiculo(v.getIdVehiculo());
-                
+
                 if (exito) {
                     MensajeUtil.info(vista, "Vehículo eliminado correctamente.");
                     cargarTabla();
                 } else {
-                    MensajeUtil.error(vista, 
-                        "No se puede eliminar este vehículo.\n" +
-                        "Puede tener reservas asociadas.");
+                    MensajeUtil.error(vista,
+                            "No se puede eliminar este vehículo.\n"
+                            + "Puede tener reservas asociadas.");
                 }
             }
         }
